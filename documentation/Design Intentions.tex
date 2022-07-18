@@ -1,4 +1,119 @@
-\part{Design Intentions}
-The software \emph{money manager} is designed to help the user to manage his money.
+\part{Design intentions}
+The piece of software \emph{money manager} is designed to help the user in managing his money (how it is spent).
 
-\section{Fundamental Functionalities}
+\section{Fundamental ideas}
+In the daily use of money, many problems arise, and the solutions to which often are tedious and involve heavy calculations. From previous experiences of dealing with the problems, the author concluded some abstract models and conjectured that implementing these models on a computer may prove to be rather convenient for money management. 
+
+This notion gave birth to the program, and the fundamental ideas in the models will be discussed in this section. The software is designed to solve problems (by applying models), so each idea is related to a fundamental problem in money management.
+
+\subsection{Current cash}
+One ultimate purpose in making decisions that may result in a change in the money one owns is to maintain the cash he has at an amount (e.g. simply above 0).
+
+One basic ability of the program consequently should be to monitor and watch the current cash, and additionally to calculate what changes a decision would be able to make to the amount, so that the user can choose what to do according to the result.
+
+\subsection{Time}
+It is obvious that money changes as time advances. At different time-point, one may have different expectations of the amount of his money. In addition, one often thinks of a time duration when spending a sum of money. For example, ``\emph{I will use what's left of this month's money to buy a new phone.}''
+
+The program should take account of these and more aspects where time is a factor on spending money.
+
+\subsection{Record}
+Providing a record for past activities is extremely useful. One example is that the user can learn from his spending habit and make adjustments.
+
+\section{Key concepts}
+From the above ideas derive the key concepts the program uses.
+
+\subsection{Proposal and expectation}
+A \emph{proposal} is an attempt to spend a sum of money from the current cash over a time duration. Time is discussed later, and for now the focus is how a proposal can interact with the cash. The amount of money a proposal would cost is its \emph{cost}.
+
+The user can have an \emph{expectation} (if he does not have any, a limit applied by the real word, 0, is used as the expectation) of how much money should be left. If, at a specific time, after all proposals is counted, the amount of the cash left meets the expectation, we say that the system (definition is given below in Section \ref{sec:cal.rule}) is in a \emph{safe state}.
+
+The program will calculate, when a new proposal is proposed, if the proposal would result in a safe state, and decide if the proposal can be accepted. If it can, then the program will prompt the user to decided if he will continue to promote the proposal. In any case, the results of passing the proposal will be displayed. The user may stop at this point as a mean to check the possible results a proposal may lead to.
+
+\subsubsection{Severity and frequency}
+Some proposals are more severe than others. For example, eating is vital to sustaining life, and thus the proposals for eating are \emph{critical} (i.e. should always be satisfied). 
+
+If a critical proposal is rejected, it means that there is a serious problem between the current cash and the user's current needs. The user may need to consider lower the cost of some proposals or remove some non-critical ones.
+
+Some proposals appear periodically with the same of similar cost. Eating is also a good example for this. The user may set a \emph{frequency} (the detail is discussed later in Subsection \ref{subsec:key.con:time}) to a proposal to make it automatically applied every a fixed duration.
+
+\subsection{Time} \label{subsec:key.con:time}
+In the program, the smallest time granularity used is \emph{day} (although the timestamps may record the time points more precisely, the core of the program only cares about days).
+
+\subsubsection{Effective duration}
+A proposal must be bound with an \emph{effective duration} during which it takes effect at its creation. Note that the effective duration is different from the frequency. Not all proposals are periodic. If a proposal is made periodic, its effective duration automatically becomes its frequency.
+
+There are currently these time duration units in the program: Daily, Weekly, Monthly, Seasonal, and Annual. Lifetime duration is not taken into account in the program.
+
+\subsection{Income}
+Any amount of money will be exhausted eventually without \emph{incomes}. The amount of money an income increases the current cash by is its \emph{value}. The program expects the user to have at least one source of \emph{fixed income} which increases the amount of the cash periodically. If, counting all sources of fixed income, the critical proposals cannot be covered entirely (a situation where the money will decrease indefinitely), the program will issue a warning whenever the user checks the current state or attempts to propose a new proposal.
+
+The warning is only a warning and has no side-effects on all actions, considering that some incomes are not fixed and come randomly with arbitrary amounts. The user can add \emph{accidental incomes} any time to bring these kinds of income into consideration. An accidental income simply increase the current cash by its value and leaves a trace in the records. However, without fixed incomes, the warning will always be present. The program is deliberately designed this way.
+
+\subsection{Free amount}
+Although periodic events normally do not take effect gradually (e.g. a monthly income normally pays once a month, not averagely everyday), a human often treats as if they do, and make plans accordingly. For example, if one has a monthly income of 3000 \$, he may think that he earns 100 \$ a day, and say to himself that he should not spend over 100 \$ a day.
+
+Therefore, it is useful that the program can help the user do that. The program will try to calculate the not daily events averagely to give an approximate number that the user can spend freely at the current day without worrying about leading into an unsafe situation.
+
+\section{Calculation rules} \label{sec:cal.rule}
+First let's review some key points and give symbols to them: The user will always have an expectation ($E$) of the lowest amount of money. The user will have a list (set) of proposals that are currently effective for each time duration:
+\begin{align*}
+P_d &:= \{\text{non-periodic proposals whose effective duration is daily} \}, 
+\\P_w &:= \{\text{... weekly}\}, 
+\\P_m &:= \{\text{... monthly}\}, 
+\\P_s &:= \{\text{... seasonal}\}, 
+\\P_a &:= \{\text{... annual}\}
+\end{align*},
+and also a list of existing periodic proposals for each: $\mathrm{P}_d, \mathrm{P}_w, \mathrm{P}_m, \mathrm{P}_s, \mathrm{P}_a$, that correspond to daily, weekly, ..., annual, respectively. Similarly, lists are made to contain fixed incomes, and named in the same nomenclature: $I_d, I_w, I_m, I_s, I_a$.
+
+The set of all above lists, and of additionally the current cash ($C$), is called the system ($S$). The program will calculate the current state upon any change to the system. Accidental incomes are not counted as part of the system, but adding any of them will result in a change to the system, because the current cash will be raised.
+
+\subsection{How a safe state is guaranteed}
+\subsubsection{Time simulation} \label{subsubsec:cal:state.cal:time.sim}
+The program aims to treat time precisely, not approximately. That is, in it approximate rules like ``\emph{A month is four weeks}'' are not used. Instead, it will simulate time advancement day by day, and handle weeks, months, and seasons as it advances, until the time has advanced \emph{100 complete} years in the simulation (i.e. when the year has increased by 100, while the month and the day return to the start point. If the starting date does not exist in the end year, that is, if the date is 29\textsuperscript{th} Feb., it will end at 28\textsuperscript{th} Feb.)
+
+\paragraph{Why 100 years?} If all years and months were regular (e.g. if all years were 336 days and all months were 28 days), it could be proved that two years is the smallest period during which all present periodic and one-time proposals and incomes can complete taking their effects, and that they will appear at the same times in the next two years. However, as the real years and months are irregular, even if in two years the money will not be below expectation, it may still be in more years. Comparing with the fact that leap years appear regularly every 400 years, a much smaller number, 100 years, a time duration that a human is expected to live for at most, is used.
+
+\paragraph{Exact duration}
+Any event starts at the day it's created (i.e. the day is counted)
+\begin{itemize}
+	\item Daily events last exactly one day; weekly events last exactly seven days.
+	\item Monthly events last until the next date in the next month (not including), or the remaining dates in the current month and the whole next month if the date is not present in the next month (The situation can only be found if the event starts at the 29\textsuperscript{th}, 30\textsuperscript{th}, or the 31\textsuperscript{st}, and if the next month is shorter than the current one. So it is a reasonable choice).
+	\item Seasonal events can start at any time, but always end immediately before the four points: 1\textsuperscript{st} Feb., 1\textsuperscript{st} May, 1\textsuperscript{st} Aug., and 1\textsuperscript{st} Nov.
+	\item Annual events can start at any time, and end immediately before the same date the next year, or 28\textsuperscript{th} Feb.~if it starts at 29\textsuperscript{th} Feb.
+\end{itemize}
+
+\paragraph{Periodic events}
+A periodic event reappears at each day that immediately follows one of its time periods, and ends at days described in the above paragraph.
+
+\subsubsection{The simulation process}
+Upon any change to the system, the program will attempt a simulation as described in Subsubsection \ref{subsubsec:cal:state.cal:time.sim}. At each day the program has advanced in a simulation,
+\begin{enumerate}
+	\item $C$ is inherited from the previous day's calculation result, or the current one if it's the first day.
+	\item all fixed incomes that reappear that day are counted, and the sum of whose values is added to $C$.
+	\item all proposals that end that day are counted, and the sum of whose costs is subtracted from $C$.
+\end{enumerate}
+
+\subsubsection{Safe state}
+If, at any day in a simulation, the calculated value of $C$ is below $E$, the program will terminate the simulation and conclude that the system will not be in a safe state after the change is applied. If the change is brought by a new proposal, the proposal will be rejected. If the simulation finished normally without being terminated beforehand, the program concludes that the system will be in a safe state for the user's (expected) lifetime.
+
+\subsection{How a free amount is calculated}
+Different from the process of determining if the system will be in a safe state where the calculation aims to be precise, the free amount calculation is done approximately. Therefore, the software will only consider a time of the user's choice in this calculation. The user can select a time between a month and two years (as mentioned before, two years is the smallest duration during which all events can at least complete taking effect once).
+
+In addition, for the sake of speed, there will not be a simulation in which time is advanced day by day. The process is instead in this way (let the time the user chooses be $T$ days):
+\begin{enumerate}
+	\item determine how many times periodic events will occur in the given period, and multiply their cost or value be the number of times. Daily events will always occur integer times, while others may not, for which they are simply treated as happening $T \div 7/30/90/365$ times, for weekly/monthly/seasonal/annual, respectively.
+	\item for one-time proposals, if one ends within the period, it is counted in its full cost; if one's duration covers the period, it is treated as happening $T \div D$ times, where $D$ is its duration in days.
+	\item Let the sum of all costs be $O$, the sum of all incomes be $I$. The average free amount $f$ is thus
+	\[
+	f = \frac{C + I - O - E}{T}
+	\]
+\end{enumerate}
+
+\section{Miscellaneous points}
+This section discusses some concepts that are less critical than key points.
+
+\subsection{Currency unit}
+The program is designed to only deal with numbers. Of course its implementation can assume that the user is using one particular unit, but all the conversion works involved when dealing with multiple currencies are left to the user.
+
+\subsection{Security}
+The program is designed to help the user make choices, not to make choice on his behalf. It only accepts abstract numbers and returns calculated results. So it will have no effect on real moneys by itself. The info may need to be protected as the user wishes, but for now the program does not provide such a functionality.
