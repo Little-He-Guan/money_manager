@@ -69,7 +69,7 @@ The set of all above lists, and of additionally the current cash ($C$), is calle
 
 \subsection{How a safe state is guaranteed}
 \subsubsection{Time simulation} \label{subsubsec:cal:state.cal:time.sim}
-The program aims to treat time precisely, not approximately. That is, in it approximate rules like ``\emph{A month is four weeks}'' are not used. Instead, it will simulate time advancement day by day, and handle weeks, months, and seasons as it advances, until the time has advanced \emph{100 complete} years in the simulation (i.e. when the year has increased by 100, while the month and the day return to the start point. If the starting date does not exist in the end year, that is, if the date is 29\textsuperscript{th} Feb., it will end at 28\textsuperscript{th} Feb.)
+The program aims to treat time precisely, not approximately. That is, in it approximate rules like ``\emph{A month is four weeks}'' are not used. Instead, it will simulate time advancement day by day, and handle weeks, months, seasons, and years as it advances, until the time has been advanced \emph{100 complete} years in the simulation (i.e. when the year has increased by 100, while the month and the day return to the start point. If the starting date does not exist in the end year, that is, if the date is 29\textsuperscript{th} Feb., it will end at 28\textsuperscript{th} Feb.)
 
 \paragraph{Why 100 years?} If all years and months were regular (e.g. if all years were 336 days and all months were 28 days), it could be proved that two years is the smallest period during which all present periodic and one-time proposals and incomes can complete taking their effects, and that they will appear at the same times in the next two years. However, as the real years and months are irregular, even if in two years the money will not be below expectation, it may still be in more years. Comparing with the fact that leap years appear regularly every 400 years, a much smaller number, 100 years, a time duration that a human is expected to live for at most, is used.
 
@@ -112,7 +112,7 @@ In addition, for the sake of speed, there will not be a simulation in which time
 \section{Miscellaneous points}
 This section discusses some concepts that are less critical than key points.
 
-\subsection{Currency unit}
+\subsection{Curr																															ency unit}
 The program is designed to only deal with numbers. Of course its implementation can assume that the user is using one particular unit, but all the conversion works involved when dealing with multiple currencies are left to the user.
 
 \subsection{Security}

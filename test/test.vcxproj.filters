@@ -15,15 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="money_manager.cpp">
+    <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="date.cpp">
+    <ClCompile Include="date_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="date.h">
+    <ClInclude Include="example_test_classes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test_case.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test_unit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
