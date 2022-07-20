@@ -296,6 +296,46 @@ DEFINE_TEST_CASE(test_date_advance_all)
 
 ENDDEF_TEST_CASE
 
+DEFINE_TEST_CASE(test_date_minus)
+
+	// when *this < d
+	{
+		date d2(2024, 12, 3), d1(2022, 8, 9);
+
+		ASSERT_EQUALS(-(d2 - d1), d1 - d2, "expected to get a negated value")
+	}
+
+	// when *this = d
+	{
+		date d(123, 1, 30);
+
+		ASSERT_EQUALS(0, d - d, "expected to get 0")
+	}
+
+	// when *this > d
+	{
+		// when only day is different
+		{
+			ASSERT_EQUALS(15, date(2000,2,20) - date(2000,2,5), "expected to have the difference correct")
+		}
+
+		// when month is additionally different
+		{
+			ASSERT_EQUALS(89, date(2000, 9, 30) - date(2000, 7, 3), "expected to have the difference correct")
+			// day is smaller
+			ASSERT_EQUALS(39, date(1204, 3, 2) - date(1204, 1, 23), "expected to have the difference correct")
+		}
+
+		// when all are different
+		{
+			ASSERT_EQUALS(886, date(2022,12,4) - date(2020, 7,1), "expected to have the difference correct")
+			// month is smaller
+			ASSERT_EQUALS(40177, date(2111, 1, 1) - date(2000, 12, 31), "expected to have the difference correct")
+		}
+	}
+
+ENDDEF_TEST_CASE
+
 void test_date()
 {
 	ghl::test_unit unit
@@ -306,7 +346,8 @@ void test_date()
 			&test_date_advance_day,
 			&test_date_advance_month,
 			&test_date_advance_year,
-			&test_date_advance_all
+			&test_date_advance_all,
+			&test_date_minus
 		},
 		"tests for class date"
 	};

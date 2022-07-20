@@ -133,9 +133,15 @@
   <ItemGroup>
     <ClCompile Include="date.cpp" />
     <ClCompile Include="money_manager.cpp" />
+    <ClCompile Include="event.cpp" />
+    <ClCompile Include="simulation.cpp" />
+    <ClCompile Include="system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="date.h" />
+    <ClInclude Include="event.h" />
+    <ClInclude Include="simulation.h" />
+    <ClInclude Include="system.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

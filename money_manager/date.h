@@ -211,6 +211,9 @@ public:
 	*/
 	constexpr void advance_weeks(unsigned short week) { advance(7 * week); }
 
+	// @returns how many days d needs to advance to be equal to *this, or -(d - *this) if *this < d
+	constexpr int operator-(date d) const;
+
 public:
 	enum seasons
 	{
@@ -409,8 +412,6 @@ constexpr bool operator<(date d1, date d2)
 	}
 }
 
-// we only define +. - is not defined.
-
 // @returns a date equals to d1.advance(d2.day, d2.month, d2.year)
 constexpr date operator+(date d1, date d2)
 {
@@ -426,3 +427,53 @@ constexpr date& operator+=(date& d1, date d2)
 	d1.advance(d2.day, d2.month, d2.year);
 	return d1;
 }
+
+constexpr int date::operator-(date d) const
+{
+	if (*this < d)
+	{
+		return -(d - *this);
+	}
+	else
+	{
+		int res = 0;
+
+		while (true)
+		{
+			if (d.year != year || d.month != month) // d is not in the same month as *this. try to advance a month and stop at the first day of the next month
+			{
+				if (d.month != 2) // can use month_days
+				{
+					res += (month_days[d.month] - d.day + 1); // + 1 as we will stop at the first day of the next month
+				}
+				else
+				{
+					res += ((d.is_leap() ? 29 : 28) - d.day + 1); // + 1 as we will stop at the first day of the next month
+				}
+
+				d.day = 1;
+				// advance month by 1
+				d.advance(0, 1);
+				continue;
+			}
+			else // d is not in the same month as *this. only need to care about day
+			{
+				res += (day - d.day);
+				break;
+			}
+		}
+
+		return res;
+	}
+}
+
+/*
+* These mark important time points in a year.
+* One can copy any of these and adjust the year as he wants.
+*/
+constexpr date
+new_year_start(1, 1, 1),
+spring_start(1, 2, 1),
+summer_start(1, 5, 1),
+autumn_start(1, 8, 1),
+winter_start(1, 11, 1);

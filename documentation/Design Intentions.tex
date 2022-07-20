@@ -65,13 +65,13 @@ P_d &:= \{\text{non-periodic proposals whose effective duration is daily} \},
 \end{align*},
 and also a list of existing periodic proposals for each: $\mathrm{P}_d, \mathrm{P}_w, \mathrm{P}_m, \mathrm{P}_s, \mathrm{P}_a$, that correspond to daily, weekly, ..., annual, respectively. Similarly, lists are made to contain fixed incomes, and named in the same nomenclature: $I_d, I_w, I_m, I_s, I_a$.
 
-The set of all above lists, and of additionally the current cash ($C$), is called the system ($S$). The program will calculate the current state upon any change to the system. Accidental incomes are not counted as part of the system, but adding any of them will result in a change to the system, because the current cash will be raised.
+The set of all above lists, and of additionally the current cash ($C$), the current date ($D$), and the user's expectation ($E$), is called the system ($S$). The program will calculate the current state upon any change to the system. Accidental incomes are not counted as part of the system, but adding any of them will result in a change to the system, because the current cash will be raised.
 
 \subsection{How a safe state is guaranteed}
 \subsubsection{Time simulation} \label{subsubsec:cal:state.cal:time.sim}
-The program aims to treat time precisely, not approximately. That is, in it approximate rules like ``\emph{A month is four weeks}'' are not used. Instead, it will simulate time advancement day by day, and handle weeks, months, seasons, and years as it advances, until the time has been advanced \emph{100 complete} years in the simulation (i.e. when the year has increased by 100, while the month and the day return to the start point. If the starting date does not exist in the end year, that is, if the date is 29\textsuperscript{th} Feb., it will end at 28\textsuperscript{th} Feb.)
+The program aims to treat time precisely, not approximately. That is, in it approximate rules like ``\emph{A month is four weeks}'' are not used. Instead, it will simulate time advancement day by day, and handle weeks, months, seasons, and years as it advances, until the time has been advanced a user supplied time (must be more than 1 year) in the simulation.
 
-\paragraph{Why 100 years?} If all years and months were regular (e.g. if all years were 336 days and all months were 28 days), it could be proved that two years is the smallest period during which all present periodic and one-time proposals and incomes can complete taking their effects, and that they will appear at the same times in the next two years. However, as the real years and months are irregular, even if in two years the money will not be below expectation, it may still be in more years. Comparing with the fact that leap years appear regularly every 400 years, a much smaller number, 100 years, a time duration that a human is expected to live for at most, is used.
+\paragraph{Suggestions on the time of the simulation} If all years and months were regular (e.g. if all years were 336 days and all months were 28 days), it could be proved that two years is the smallest period during which all present periodic and one-time proposals and incomes can complete taking their effects, and that they will appear at the same times in the next two years. However, as the real years and months are irregular, even if in two years the money will not be below expectation, it may still be in more years. This fact, doesn't mean that one should try to let the program predict the state throughout his lifetime (e.g. make the time 100 years). An obvious fact against this is that one's incomes and expenses are likely to change as time advances. \emph{Therefore, it is recommended that the time is around two years. By default, two years is used if the user does not specify a different value.}
 
 \paragraph{Exact duration}
 Any event starts at the day it's created (i.e. the day is counted)
@@ -112,7 +112,7 @@ In addition, for the sake of speed, there will not be a simulation in which time
 \section{Miscellaneous points}
 This section discusses some concepts that are less critical than key points.
 
-\subsection{Curr																															ency unit}
+\subsection{Currency unit}
 The program is designed to only deal with numbers. Of course its implementation can assume that the user is using one particular unit, but all the conversion works involved when dealing with multiple currencies are left to the user.
 
 \subsection{Security}
