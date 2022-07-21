@@ -23,24 +23,29 @@ public:
 	// must provide sufficient info
 	financial_event() = delete;
 	financial_event(double a, date s, effective_duration t, const std::string& n):
-		name(n), amount(a), start(s), type(t)
+		name(&n), amount(a), start(s), type(t)
 	{
 		calculate_end();
 	}
 	financial_event(double a, date s, date e, effective_duration t, const std::string& n) :
-		name(n), amount(a), start(s), end(e), type(t) {}
+		name(&n), amount(a), start(s), end(e), type(t) {}
 
-	// no two events (of the same kind) can have the same name!
-	financial_event(const financial_event&) = delete;
+	// although no two events of the same kind should have the same name in A SYSTEM,
+	// we may need to copy a system's state to run a simulation.
+	financial_event(const financial_event& other) :
+		name(other.name),
+		amount(other.amount),
+		type(other.type),
+		start(other.start), end(other.end) {}
+	// not useful for now
 	financial_event& operator=(const financial_event&) = delete;
 
 	financial_event(financial_event&& other) noexcept :
 		name(other.name),
 		amount(other.amount),
 		type(other.type),
-		start(other.start), end(other.end)
-	{}
-	// once created, its name cannot be rebound!
+		start(other.start), end(other.end) {}
+	// not useful for now
 	financial_event& operator=(financial_event&&) = delete;
 
 	virtual ~financial_event() = default;
@@ -64,7 +69,7 @@ protected:
 	void calculate_end();
 
 public:
-	const std::string& name;
+	const std::string* name = nullptr;
 
 	// effective duration is [start, end)
 	date start, end;
@@ -82,6 +87,7 @@ public:
 	periodic_event(double a, date s, effective_duration t, const std::string& n) : financial_event(a, s, t, n) {}
 	periodic_event(double a, date s, date e, effective_duration t, const std::string& n) : financial_event(a, s, e, t, n) {}
 
+	periodic_event(const periodic_event& other) : financial_event(other) {}
 	periodic_event(periodic_event&& other) noexcept : financial_event(std::move(other)) {}
 
 	~periodic_event() = default;

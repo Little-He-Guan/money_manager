@@ -15,8 +15,6 @@ void financial_event::calculate_end()
 
 	case monthly:
 		end.advance(0, 1);
-		// advance one more day to make the end after the last day of the duration
-		end.advance(1);
 		break;
 
 	case seasonal:
@@ -45,8 +43,6 @@ void financial_event::calculate_end()
 
 	case annual:
 		end.advance(0, 0, 1);
-		// advance one more day to make the end after the last day of the duration
-		end.advance(1);
 		break;
 	}
 }

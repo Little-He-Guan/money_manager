@@ -2,10 +2,14 @@
 //
 
 void test_date();
+void test_financial_system();
 
 int main()
 {
-	test_date();
+	// passed
+	//test_date();
+
+	test_financial_system();
 
 	return 0;
 }

@@ -1,14 +1,30 @@
-#include "event.h"
 #include "system.h"
 
-
-void system::add_accidental_income(double value)
+void financial_system::add_accidental_income(double value)
 {
 	current_cash += value;
 	record_event(event_type::accidental_income, nullptr, value);
 }
 
-void system::advance_one_day()
+const financial_event* financial_system::find_ot_proposal(const std::string& name)
+{
+	auto iter = ot_proposals.find(name);
+	return iter != ot_proposals.end() ? &iter->second : nullptr;
+}
+
+const periodic_event* financial_system::find_p_proposal(const std::string& name)
+{
+	auto iter = p_proposals.find(name);
+	return iter != p_proposals.end() ? &iter->second : nullptr;
+}
+
+const periodic_event* financial_system::find_fixed_income(const std::string& name)
+{
+	auto iter = incomes.find(name);
+	return iter != incomes.end() ? &iter->second : nullptr;
+}
+
+void financial_system::advance_one_day()
 {
 	current_date.advance(1);
 
@@ -48,6 +64,6 @@ void system::advance_one_day()
 	}
 }
 
-void system::record_event(event_type type, const financial_event* p_event, double ai_amount)
+void financial_system::record_event(event_type type, const financial_event* p_event, double ai_amount)
 {
 }

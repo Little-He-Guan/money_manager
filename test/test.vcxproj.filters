@@ -21,6 +21,9 @@
     <ClCompile Include="date_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="financial_system_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="example_test_classes.h">
