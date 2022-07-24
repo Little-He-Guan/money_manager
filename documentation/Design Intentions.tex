@@ -25,14 +25,12 @@ From the above ideas derive the key concepts the program uses.
 \subsection{Proposal and expectation}
 A \emph{proposal} is an attempt to spend a sum of money from the current cash over a time duration. Time is discussed later, and for now the focus is how a proposal can interact with the cash. The amount of money a proposal would cost is its \emph{cost}.
 
-The user can have an \emph{expectation} (if he does not have any, a limit applied by the real word, 0, is used as the expectation) of how much money should be left. If, at a specific time, after all proposals is counted, the amount of the cash left meets the expectation, we say that the system (definition is given below in Section \ref{sec:cal.rule}) is in a \emph{safe state}.
+The user can have an \emph{expectation} (if he does not have any, a limit applied by the real word, 0, is used as the expectation) of how much money should be left. If, at a specific time (after counting all changes), the amount of the cash left meets the expectation, we say that the system (definition is given below in Section \ref{sec:cal.rule}) is in a \emph{safe state}.
 
-The program will calculate, when a new proposal is proposed, if the proposal would result in a safe state, and decide if the proposal can be accepted. If it can, then the program will prompt the user to decided if he will continue to promote the proposal. In any case, the results of passing the proposal will be displayed. The user may stop at this point as a mean to check the possible results a proposal may lead to.
+The program will calculate, when a new proposal is proposed, if the proposal would result in a safe state in the near future, and decide accordingly if the proposal can be accepted. If it can, then the program will prompt the user to decided if he will continue to promote the proposal. In any case, the results of passing the proposal will be displayed. The user may stop at this point as a mean to check the possible results a proposal may lead to.
 
-\subsubsection{Severity and frequency}
-Some proposals are more severe than others. For example, eating is vital to sustaining life, and thus the proposals for eating are \emph{critical} (i.e. should always be satisfied). 
-
-If a critical proposal is rejected, it means that there is a serious problem between the current cash and the user's current needs. The user may need to consider lower the cost of some proposals or remove some non-critical ones.
+\subsubsection{Frequency}
+If a proposal is rejected, it means that there is a serious problem between the current cash and the user's current needs. The user may need to consider lower the cost of some proposals or remove some.
 
 Some proposals appear periodically with the same of similar cost. Eating is also a good example for this. The user may set a \emph{frequency} (the detail is discussed later in Subsection \ref{subsec:key.con:time}) to a proposal to make it automatically applied every a fixed duration.
 
@@ -45,7 +43,7 @@ A proposal must be bound with an \emph{effective duration} during which it takes
 There are currently these time duration units in the program: Daily, Weekly, Monthly, Seasonal, and Annual. Lifetime duration is not taken into account in the program.
 
 \subsection{Income}
-Any amount of money will be exhausted eventually without \emph{incomes}. The amount of money an income increases the current cash by is its \emph{value}. The program expects the user to have at least one source of \emph{fixed income} which increases the amount of the cash periodically. If, counting all sources of fixed income, the critical proposals cannot be covered entirely (a situation where the money will decrease indefinitely), the program will issue a warning whenever the user checks the current state or attempts to propose a new proposal.
+Any amount of money will be exhausted eventually without \emph{incomes}. The amount of money an income increases the current cash by is its \emph{value}. The program expects the user to have at least one source of \emph{fixed income} which increases the amount of the cash periodically. If, counting all sources of fixed income, the proposals cannot be covered entirely (a situation where the money will decrease indefinitely), the program will issue a warning whenever the user checks the current state or attempts to propose a new proposal.
 
 The warning is only a warning and has no side-effects on all actions, considering that some incomes are not fixed and come randomly with arbitrary amounts. The user can add \emph{accidental incomes} any time to bring these kinds of income into consideration. An accidental income simply increase the current cash by its value and leaves a trace in the records. However, without fixed incomes, the warning will always be present. The program is deliberately designed this way.
 
@@ -53,6 +51,9 @@ The warning is only a warning and has no side-effects on all actions, considerin
 Although periodic events normally do not take effect gradually (e.g. a monthly income normally pays once a month, not averagely everyday), a human often treats as if they do, and make plans accordingly. For example, if one has a monthly income of 3000 \$, he may think that he earns 100 \$ a day, and say to himself that he should not spend over 100 \$ a day.
 
 Therefore, it is useful that the program can help the user do that. The program will try to calculate the not daily events averagely to give an approximate number that the user can spend freely at the current day without worrying about leading into an unsafe situation.
+
+\subsection{Event}
+An \emph{(financial) event} is a proposal or an income.
 
 \section{Calculation rules} \label{sec:cal.rule}
 First let's review some key points and give symbols to them: The user will always have an expectation ($E$) of the lowest amount of money. The user will have a list (set) of proposals that are currently effective for each time duration:
@@ -69,7 +70,7 @@ The set of all above lists, and of additionally the current cash ($C$), the curr
 
 \subsection{How a safe state is guaranteed}
 \subsubsection{Time simulation} \label{subsubsec:cal:state.cal:time.sim}
-The program aims to treat time precisely, not approximately. That is, in it approximate rules like ``\emph{A month is four weeks}'' are not used. Instead, it will simulate time advancement day by day, and handle weeks, months, seasons, and years as it advances, until the time has been advanced a user supplied time (must be more than 1 year) in the simulation.
+The program aims to treat time precisely, not approximately. That is, in it approximate rules like ``\emph{A month is four weeks}'' are not used. Instead, it will simulate time advancement day by day, and handle weeks, months, seasons, and years as it advances, until the time has been advanced a user specified time (must be $\ge$ 1 year and $\le$ 5 years) in the simulation.
 
 \paragraph{Suggestions on the time of the simulation} If all years and months were regular (e.g. if all years were 336 days and all months were 28 days), it could be proved that two years is the smallest period during which all present periodic and one-time proposals and incomes can complete taking their effects, and that they will appear at the same times in the next two years. However, as the real years and months are irregular, even if in two years the money will not be below expectation, it may still be in more years. This fact, doesn't mean that one should try to let the program predict the state throughout his lifetime (e.g. make the time 100 years). An obvious fact against this is that one's incomes and expenses are likely to change as time advances. \emph{Therefore, it is recommended that the time is around two years. By default, two years is used if the user does not specify a different value.}
 
@@ -116,4 +117,4 @@ This section discusses some concepts that are less critical than key points.
 The program is designed to only deal with numbers. Of course its implementation can assume that the user is using one particular unit, but all the conversion works involved when dealing with multiple currencies are left to the user.
 
 \subsection{Security}
-The program is designed to help the user make choices, not to make choice on his behalf. It only accepts abstract numbers and returns calculated results. So it will have no effect on real moneys by itself. The info may need to be protected as the user wishes, but for now the program does not provide such a functionality.
+The program is designed to help the user make choices, not to make choice on his behalf. It only accepts abstract numbers and returns calculated results. So it will have no effect on real moneys by itself (and no way to do that). The info may need to be protected as the user wishes, but for now the program does not provide such a functionality.

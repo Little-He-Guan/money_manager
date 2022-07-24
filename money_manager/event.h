@@ -12,11 +12,11 @@ class financial_event
 public:
 	enum effective_duration
 	{
-		daily,
-		weekly,
-		monthly,
-		seasonal,
-		annual
+		daily = 0,
+		weekly = 1,
+		monthly = 2,
+		seasonal = 3,
+		annual = 4
 	};
 
 public:
@@ -64,6 +64,9 @@ public:
 	*/
 	virtual bool update(date d) { if (d == end) return true; else return false; }
 
+public:
+	virtual std::string to_string() const;
+
 protected:
 	// calculates end according to start and type
 	void calculate_end();
@@ -74,10 +77,17 @@ public:
 	// effective duration is [start, end)
 	date start, end;
 
-	// if cost > 0, it is an income; if < 0, it is a proposal.
+	// the absolute value of the change to cash the event makes, and is used differently depending on the event type
 	double amount;
 
 	effective_duration type;
+
+private:
+	// the approximate length of the effective duration corresponding to each type
+	static constexpr unsigned approx_length_in_days[5] = { 1,7,30,91,365 };
+public:
+	// @returns the approximate length of the effective duration corresponding to the type
+	static constexpr unsigned get_approx_length_in_days(effective_duration type) { return approx_length_in_days[type]; }
 };
 
 // an event that happens periodically
@@ -100,4 +110,6 @@ public:
 	* @returns true iff the end has been reached
 	*/
 	bool update(date d) override;
+
+	std::string to_string() const override;
 };

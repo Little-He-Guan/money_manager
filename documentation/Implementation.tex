@@ -1,0 +1,258 @@
+\part{Implementation}
+
+\section{Program commands}
+For now the program can only be used from a console. This section defines its commands by which the user interacts with it.
+
+\subsection{Format}
+All commands and their options are shown in \texttt{typewriter font}. All command arguments are shown \emph{emphasized}. All options/arguments that are optional are indicated with a subscript \textsubscript{opt}.
+
+\subsubsection{Options}
+Options are either two hyphens followed by a series of English letters and hyphens, or a single hyphen followed by a single letter (as an abbreviation).
+
+\subsubsection{Input format} \label{subsubsec:cmd:format:inp.format}
+Dates are input in the form of MM-DD-YYYY, where MM/DD can only have one number if the number is $< 10$, and where YYYY can be of any number. (e.g. 2-10-99999 is a valid input)
+
+\subsection{Command help}
+The command \texttt{help} tries to open the documentation.
+
+\subsubsection{Usage}
+\begin{center}
+	\texttt{help}
+\end{center}
+
+\subsection{Command init}
+The command \texttt{init} initializes a new system, or does nothing if a system already exists.
+
+\subsubsection{Usage}
+\begin{center}
+	\texttt{init} \cmdarg{cash} \optarg{expectation}
+\end{center}
+
+\subsubsection{Output}
+One of the following:
+\begin{itemize}
+	\item A message that shows that the system is successfully initialized.
+	\item A message that indicates a failure if there is already a system.
+\end{itemize}
+
+\paragraph{Arguments}
+\begin{description}
+	\item[cash] the amount of initial cash, in decimal.
+	\item[expectation] the amount of user expectation, in decimal. If the argument is not supplied, the program executes the command as if a default number (0.0) is supplied.
+\end{description}
+
+\subsection{Command list}
+The command \texttt{list} is used to list events of a certain kind.
+
+\subsubsection{Usage}
+\begin{center}
+	\texttt{list  --one-time-proposals (-o) | --periodic-proposals (-p) | --fixed-incomes (-f)}
+\end{center}
+
+\paragraph{Options}
+\begin{description}
+	\item[-o] lists all one-time proposals
+	\item[-p] lists all periodic proposals
+	\item[-f] lists all fixed incomes
+\end{description}
+
+\subsubsection{Output}
+A list of descriptions of the kind of events. The list can be empty (i.e. the output can be none) if there are no such kind of events.
+
+\subsection{Command state}
+The command \texttt{state} displays the current state of the system. Or shows a message if there is no system at all.
+
+\subsubsection{Usage}
+\begin{center}
+	\texttt{state}
+\end{center}
+
+\subsubsection{Output}
+The current state of the system, or a message that indicates there is no system at all. In addition,
+\begin{itemize}
+	\item If the program finds out no fixed income is present, a warning will be issued.
+	\item If the program finds out that the system is not in a safe state 
+	\item A message that indicates a failure of adding a proposal, if the program concludes that the system would not be in a safe state for the user specified time if the proposal was added.
+\end{itemize}
+
+\subsection{Command add}
+The command \texttt{add} adds an event to the system, and triggers a simulation if it is a proposal to be added.
+\subsubsection{Usage}
+\begin{center}
+	\texttt{add --one-time-proposal (-o) | --periodic-proposal (-p) | --fixed-income (-f) | --accidental-income (-a)} \cmdarg{event-name} \cmdarg{event-amount} \cmdarg{effective-duration} \optarg{start-date} \optarg{simulation-duration}
+\end{center}
+
+\paragraph{Arguments}
+\begin{description}
+	\item[event-name] name of the event. No two events of the same type can have the same name, except when the kind is  accidental income.
+	\item[event-amount] amount of the event, in decimal.
+	\item[effective-duration] length of its effective duration, one of the following: 0 (daily), 1 (weekly), 2 (monthly), 3 (seasonal), and 4 (annual). If the event is an accidental income, it is ignored (and the user is able to not supply it then). If the event is periodic, it also automatically becomes the length of its period.
+	\item[start-date] The date at which (including) the event starts to take place. If the event is an accidental income, it is ignored. If not supplied, the program executes the command as if the current local date is supplied.
+	\item[simulation-duration] The date of the end of the simulation duration (which is current date to end). Ignored if the event is not a proposal. The duration should be between 1 year to 5 years. If not supplied, the program executes the command as if 2 years (730 days) is supplied.
+\end{description}
+
+\subsubsection{Output}
+One of the following:
+\begin{itemize}
+	\item A message that shows the event is successfully added to the system, if the event is not a proposal.
+	\item A message that displays the calculated state of the system in the near future if the user tries to add a proposal. The state will include a prediction of the average money the user can spend each day for one year. If a safe state can be guaranteed for the whole simulation duration, the user will be able to choose to continue to add the proposal or abandon it (by which means the user is able to see what the result of a proposal would be).
+	\item A message that indicates a failure caused by name collision.
+\end{itemize}
+
+\subsection{Command remove}
+The command \texttt{remove} removes an event from the system.
+\subsubsection{Usage}
+\begin{center}
+	\texttt{remove --one-time-proposal (-o) | --periodic-proposal (-p) | --fixed-income (-f)} \cmdarg{event-name}
+\end{center}
+
+\paragraph{Arguments}
+\begin{description}
+	\item[event-name] name of the event to be removed.
+\end{description}
+
+\subsubsection{Output}
+One of the following:
+\begin{itemize}
+	\item A message that shows the event is successfully removed from the system
+	\item A message that indicates a failure if the name does not exist.
+\end{itemize}
+
+\subsection{Command find}
+The command \texttt{find} finds an event in the system, and shows its detailed description (c.f. the command \texttt{list} only shows a short description for each).
+\subsubsection{Usage}
+\begin{center}
+	\texttt{find --one-time-proposal (-o) | --periodic-proposal (-p) | --fixed-income (-f)} \cmdarg{event-name}
+\end{center}
+
+\paragraph{Arguments}
+\begin{description}
+	\item[event-name] name of the event.
+\end{description}
+
+\subsubsection{Output}
+One of the following:
+\begin{itemize}
+	\item A description of the event, if found.
+	\item A message that indicates a failure if the name does not exist.
+\end{itemize}
+
+\subsection{Command set}
+The command \texttt{set} sets the amount of an event in the system
+\subsubsection{Usage}
+\begin{center}
+	\texttt{find --one-time-proposal (-o) | --periodic-proposal (-p) | --fixed-income (-f)} \cmdarg{event-name}  \cmdarg{new-amount} \optarg{simulation-duration}
+\end{center}
+
+\paragraph{Arguments}
+\begin{description}
+	\item[event-name] name of the event.
+	\item[new-amount] the amount to be set
+	\item[simulation-duration] The date of the end of the simulation duration (which is current date to end). Ignored if the event is not a proposal. The duration should be between 1 year to 5 years. If not supplied, the program executes the command as if 2 years (730 days) is supplied.
+\end{description}
+
+\subsubsection{Output}
+One of the following:
+\begin{itemize}
+	\item A messages that shows the amount is successfully changed.
+	\item A message that indicates a failure if the name does not exist.
+	\item A message that shows that the set cannot be allows because the system would not be in a safe state some day.
+\end{itemize}
+
+\subsection{Command simulate}
+The command \texttt{simulate} starts a simulation to calculate precisely if the system will remain in a safe state until a specific date in the future.
+\subsubsection{Usage}
+\begin{center}
+	\texttt{simulate} \optarg{simulation-duration}
+\end{center}
+
+\paragraph{Arguments}
+\begin{description}
+	\item[simulation-duration] The end of the duration (current date to end). The duration should be between 1 year to 5 years. If not supplied, the program executes the command as if 2 years (730 days) is supplied.
+\end{description}
+
+\subsubsection{Output}
+One of the following:
+\begin{itemize}
+	\item A message that shows the amount of the money the user can spend averagely each day
+	\item A message that indicates that the system cannot support anymore expenses, if the program detects that counting all events, the cash would be below the expectation someday.
+\end{itemize}
+
+\subsection{Command predict}
+The command \texttt{predict} predicts the average amount of money the user can spend at most each day in the near future \emph{approximately}, counting all present events.
+\subsubsection{Usage}
+\begin{center}
+	\texttt{predict} \optarg{prediction-duration}
+\end{center}
+
+\paragraph{Arguments}
+\begin{description}
+	\item[prediction-duration] The end of the duration (current date to end). It should be between one month from current date to two years from current date. If not supplied, the programs executes the command as if 1 month is supplied.
+\end{description}
+
+\subsubsection{Output}
+One of the following:
+\begin{itemize}
+	\item A message that shows the amount of the money the user can spend averagely each day
+	\item A message that indicates that the system cannot support anymore expenses, if the program detects that counting all events, the cash would be below the expectation someday.
+\end{itemize}
+
+\subsubsection[simulate \& predict duration difference]{Why the duration of simulate is different from the duration of predict}
+The duration of a simulation is longer than the duration of a prediction because that a simulation simulates the future events precisely while a prediction does it approximately. The most important thing is that, a simulation cares about the dates which the cashes are changed as well as the changes, while a prediction only cares about the changes.
+
+Therefore, the longer duration is, the more likely a situation will happen when a prediction gives a positive number but the cash will be below expectation at some day in the duration.
+
+\subsection{Command log}
+The command \texttt{log} displays the record of all events that have taken effect.
+
+\subsubsection{Usage}
+\begin{center}
+	\texttt{log} \optarg{number-of-lines}
+\end{center}
+
+\paragraph{Arguments}
+\begin{description}
+	\item[number-of-lines] Specifies the lines of the record the program will display (one line is one event). If not supplied, the program tries to output all of the file.
+\end{description}
+
+\subsubsection{Output}
+The record, or a number of lines of it as the user specifies. Note, if the file is shorter than the number of lines, only what the file has got will be shown.
+
+\subsection{Command exit}
+The command \texttt{exit} exits the programs, after saving the current system to file.
+
+\subsubsection{Usage}
+\begin{center}
+	\texttt{exit}
+\end{center}
+
+\section{File format}
+The sections describes the file format the program uses.
+
+\subsection{Save file}
+The program will save the system to the \emph{save file} when it exits, and will load the system from it when it boots.
+
+\subsubsection{Filename and path}
+The filename of the save file is \texttt{save.sav}, which is in the program's directory.
+
+\subsubsection{Format}
+The file is in this format:
+\begin{enumerate}
+	\item First line: A string representation of the \emph{date} (see Subsubsection \ref{subsubsec:cmd:format:inp.format}).
+	\item Second line: \emph{current-cash} \texttt{space} \emph{expectation}
+	\item Third line: \emph{number} of one-time proposals
+	\item Fourth to (4 + number of one-time proposals)\textsuperscript{th} line: each line is a one-time proposal, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{effective-duration-type} 
+	\item (4 + number of one-time proposals + 1)\textsuperscript{th} line: \emph{number} of periodic proposals
+	\item (4 + number of one-time proposals + 2)\textsuperscript{th} to (4 + number of one-time proposals + 1 + number of periodic proposals)\textsuperscript{th} line: each line is a periodic proposal, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{effective-duration-type} 
+	\item (4 + number of one-time proposals + 1 + number of periodic proposals + 1)\textsuperscript{th} line: \emph{number} of fixed incomes
+	\item (4 + number of one-time proposals + 1 + number of periodic proposals + 2)\textsuperscript{th} to (4 + number of one-time proposals + 1 + number of periodic proposals + 1 + number of fixed income)\textsuperscript{th} line: each line is a fixed income, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{effective-duration-type} 
+\end{enumerate}
+
+\subsection{Log file}
+The file contains the records of the program.
+
+\subsubsection{Filename and path}
+The filename of the save file is \texttt{log.log}, which is in the program's directory.
+
+\subsubsection{Format}
+Each line represents an event: \emph{event-type} \texttt{space} \emph{name} \texttt{space} ``at'' \texttt{space} \emph{event-end-date} \texttt{space} \emph{event-amount} 

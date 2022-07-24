@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="command_interpreter_test.cpp" />
     <ClCompile Include="date_test.cpp" />
     <ClCompile Include="financial_system_test.cpp" />
     <ClCompile Include="test.cpp" />

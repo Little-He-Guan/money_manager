@@ -336,6 +336,31 @@ DEFINE_TEST_CASE(test_date_minus)
 
 ENDDEF_TEST_CASE
 
+DEFINE_TEST_CASE(test_date_and_string)
+
+	// date to string
+	{
+		date d(2001, 3, 12);
+		ASSERT_EQUALS("3-12-2001", d.to_string(), "expected to have the string right")
+	}
+
+	// string to date
+	{
+		// invalid str
+		ASSERT_EQUALS(zero_date, string_to_date("2-100-1020"), "expected to return the invalid date if the string is not in correct format")
+
+		// normal MM-DD-YYYY
+		ASSERT_EQUALS(date(1923, 11, 22), string_to_date("11-22-1923"), "expected to return have the date correct")
+		ASSERT_EQUALS(date(1923, 1, 2), string_to_date("01-02-1923"), "expected to return have the date correct")
+
+		// with other numbers of digits
+
+		ASSERT_EQUALS(date(66666, 11, 22), string_to_date("11-22-66666"), "expected to return have the date correct")
+		ASSERT_EQUALS(date(333, 9, 9), string_to_date("9-9-333"), "expected to return have the date correct")
+	}
+
+ENDDEF_TEST_CASE
+
 void test_date()
 {
 	ghl::test_unit unit
@@ -347,7 +372,8 @@ void test_date()
 			&test_date_advance_month,
 			&test_date_advance_year,
 			&test_date_advance_all,
-			&test_date_minus
+			&test_date_minus,
+			&test_date_and_string
 		},
 		"tests for class date"
 	};

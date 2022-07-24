@@ -1,15 +1,28 @@
 \documentclass{article}
 
 \usepackage{amsmath}
-%\usepackage{amsthm}
 
+%\usepackage{amsthm}
 %\newtheorem{theorem}{Theorem}
+
+% used to introduce an argument of a command
+\newcommand{\cmdarg}[1]{\emph{#1}}
+% used to introduce an optional argument of a command
+\newcommand{\optarg}[1]{\emph{#1}\textsubscript{opt}}
+% used to introduce an optional option of a command
+\newcommand{\optopt}[1]{\texttt{#1}\textsubscript{opt}}
 
 \usepackage{hyperref}
 \hypersetup{colorlinks=true}
 
 \begin{document}
+	
+\newpage
+\pagenumbering{roman}
+\tableofcontents
 
+\clearpage
+\pagenumbering{arabic}
 \input{Design Intentions.tex}
 
 \input{User Manual.tex}

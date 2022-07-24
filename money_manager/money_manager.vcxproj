@@ -46,7 +46,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="command_interpreter.cpp" />
     <ClCompile Include="date.cpp" />
     <ClCompile Include="money_manager.cpp" />
     <ClCompile Include="event.cpp" />
@@ -138,8 +139,10 @@
     <ClCompile Include="system.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="command_interpreter.h" />
     <ClInclude Include="date.h" />
     <ClInclude Include="event.h" />
+    <ClInclude Include="money_manager.h" />
     <ClInclude Include="simulation.h" />
     <ClInclude Include="system.h" />
   </ItemGroup>

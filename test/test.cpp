@@ -3,13 +3,18 @@
 
 void test_date();
 void test_financial_system();
+void test_command_interpreter();
 
 int main()
 {
 	// passed
 	//test_date();
 
-	test_financial_system();
+	// passed
+	//test_financial_system();
+
+	// passed
+	//test_command_interpreter();
 
 	return 0;
 }

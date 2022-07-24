@@ -1,5 +1,17 @@
 #pragma once
 
+#include <string>
+#include <regex>
+
+struct date;
+
+/*
+* Expect the string to be in the form MM-DD-YYYY (MM and DD can be 1 digit, and YYYY can be any number of digits)
+* 
+* @returns the date converted, or the zero_date if str does not match our expectation
+*/
+date string_to_date(const std::string& str);
+
 /*
 * Rep Invariant:
 * year > 0 && 0 < month <= 12 && day is present for the year and month
@@ -12,6 +24,15 @@ public:
 	// don't know which valid date it should be; let it be the first day of the century
 	constexpr date() : year(2000), month(1), day(1) {}
 	constexpr date(unsigned in_year, unsigned short in_month, unsigned short in_day) : year(in_year), month(in_month), day(in_day) {}
+
+	/*
+	* Expect the string to be in the form MM-DD-YYYY (MM and DD can be 1 digit, and YYYY can be any number of digits)
+	* Otherwise, the all members are set to 0.
+	*/
+	explicit date(const std::string str)
+	{
+		*this = string_to_date(str);
+	}
 
 	constexpr date(const date& other) : year(other.year), month(other.month), day(other.day) {}
 
@@ -258,6 +279,12 @@ public:
 	}
 
 public:
+	std::string to_string() const
+	{
+		return std::to_string(month) + '-' + std::to_string(day) + '-' + std::to_string(year);
+	}
+
+public:
 	unsigned year;
 	unsigned short month;
 	unsigned short day;
@@ -284,6 +311,10 @@ private:
 
 		return false;
 	}
+
+public:
+	static constexpr auto date_str_regex = "([\\d]{1,2})\\-([\\d]{1,2})\\-([\\d]+)";
+	static const std::regex date_str_regex_obj;
 };
 
 // recall that pass by value is preferred.
@@ -427,6 +458,20 @@ constexpr date& operator+=(date& d1, date d2)
 	d1.advance(d2.day, d2.month, d2.year);
 	return d1;
 }
+// @returns a date equals to d.advance(day)
+constexpr date operator+(date d, unsigned day)
+{
+	date res = d;
+	res.advance(day);
+	return res;
+}
+// d will be advanced as if calling d.advance(day)
+// @returns a reference to d
+constexpr date& operator+=(date& d, unsigned day)
+{
+	d.advance(day);
+	return d;
+}
 
 constexpr int date::operator-(date d) const
 {
@@ -466,7 +511,6 @@ constexpr int date::operator-(date d) const
 		return res;
 	}
 }
-
 /*
 * These mark important time points in a year.
 * One can copy any of these and adjust the year as he wants.
@@ -477,3 +521,6 @@ spring_start(1, 2, 1),
 summer_start(1, 5, 1),
 autumn_start(1, 8, 1),
 winter_start(1, 11, 1);
+// can be used to indicate an error
+constexpr date
+zero_date(0, 0, 0);

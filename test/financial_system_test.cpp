@@ -95,13 +95,31 @@ DEFINE_TEST_CASE(test_system_advance_day)
 
 ENDDEF_TEST_CASE
 
+DEFINE_TEST_CASE(test_system_predict)
+
+	financial_system sys(3000.0, 1000.0, date(2022, 7, 23));
+
+	sys.emplace_fixed_income("123", 2000.0, date(2022, 6, 1), financial_event::monthly);
+	sys.emplace_fixed_income("456", 10000.0, date(2022, 7, 31), financial_event::annual);
+	sys.emplace_p_proposal("111", 999.0, date(2022, 7, 11), financial_event::monthly);
+	sys.emplace_p_proposal("333", 100.0, date(2022, 6, 29), financial_event::weekly);
+
+	sys.emplace_ot_proposal("444", 1000.0, date(2022, 7, 22), financial_event::weekly);
+	// will not be completed
+	sys.emplace_ot_proposal("222", 666.0, date(2022, 6, 25), financial_event::annual);
+
+	ASSERT_EQUALS((2000.0 * 31.0/30.0 + 10000.0 * 31.0/365.0 - 999.0 * 31.0/30.0 - 100.0 * 31.0/7.0 - 1000.0 * 6.0/7.0 + 3000.0 - 1000.0) / 31.0, sys.predict(date(2022, 8, 23)), "expected to have the amount right")
+
+ENDDEF_TEST_CASE
+
 void test_financial_system()
 {
 	ghl::test_unit unit
 	{
 		{
 			&test_system_add,
-			&test_system_advance_day
+			&test_system_advance_day,
+			&test_system_predict
 		},
 		"tests for class financial_system"
 	};

@@ -1,5 +1,13 @@
 #include "event.h"
 
+std::string financial_event::to_string() const
+{
+	return std::string(
+		"Name: " + *name + 
+		"\n\t Start: " + start.to_string() + " End: " + end.to_string() +
+		"\n\t Amount: " + std::to_string(amount));
+}
+
 void financial_event::calculate_end()
 {
 	end = start;
@@ -60,4 +68,29 @@ bool periodic_event::update(date d)
 	{
 		return false;
 	}
+}
+
+std::string periodic_event::to_string() const
+{
+	std::string period_str;
+	switch (type)
+	{
+	case daily:
+		period_str = " daily ";
+		break;
+	case weekly:
+		period_str = " weekly ";
+		break;
+	case monthly:
+		period_str = " monthly ";
+		break;
+	case seasonal:
+		period_str = " seasonal ";
+		break;
+	case annual:
+		period_str = " annual ";
+		break;
+	}
+
+	return financial_event::to_string() + "\n\t Period:" + period_str;
 }
