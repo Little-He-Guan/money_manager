@@ -9,6 +9,10 @@
 
 #include <stdexcept>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif // _WIN32
+
 constexpr auto save_file_name = "save.sav";
 
 namespace fs = std::filesystem;
@@ -270,10 +274,11 @@ void money_manager::start()
 		}
 	}
 
-	io.write_output(
-		std::string("Welcome to money manager version 0.99.\n") +
-		(load_successful ? "Successfully loaded from previous save\n" + sys.to_string_short() : "You do not have a financial system now. Use command init to create one.") +
-		"\n"
+	io.enable_coloring();
+
+	io.write_command_output(
+		std::string("Welcome to money manager version 1.0.\n") +
+		(load_successful ? "Successfully loaded from previous save\n" + sys.to_string_short() : "You do not have a financial system now. Use command init to create one.")
 	);
 }
 
@@ -294,15 +299,15 @@ void money_manager::shut_down()
 }
 
 constexpr auto amount_regex = "([\\d]*\\.)?([\\d]+)";
-const std::regex amount_regex_obj(amount_regex);
-
 void money_manager::handle_command()
 {
+	static const std::regex amount_regex_obj(amount_regex);
+
 	static const auto& cmd = io.get_current_cmd();
 
 	if (cmd.name == "exit")
 	{
-		io.write_output("Saving contents... Please do not turn off your computer.\n");
+		io.write_command_output(command_interpreter::apply_color("Saving contents... Please do not turn off your computer.", command_interpreter::f_yellow));
 		shut_down();
 		io.write_output("Bye bye ~\n");
 	}
@@ -314,7 +319,7 @@ void money_manager::handle_command()
 	{
 		if (!fs::exists(log_file_path))
 		{
-			io.write_output("No log exists for now.\n");
+			io.write_command_output(command_interpreter::apply_color("No log exists for now.", command_interpreter::f_red));
 		}
 		else
 		{
@@ -330,15 +335,16 @@ void money_manager::handle_command()
 				file_lines.push_back(line);
 			}
 
+			io.set_color(command_interpreter::f_yellow);
 			if (cmd.arguments.size() > 1) // incorrect number of arguments
 			{
-				io.write_output("Incorrect number of arguments.\n");
+				io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments.", command_interpreter::f_red));
 			}
 			else if (cmd.arguments.size() == 1) // with number of lines
 			{
 				if (!std::regex_match(cmd.arguments[0], integer_regex_obj))
 				{
-					io.write_output("Expected to have a number for arg1, but an incorrect one is supplied.\n");
+					io.write_command_output(command_interpreter::apply_color("Expected to have a number for arg1, but an incorrect one is supplied.", command_interpreter::f_red));
 				}
 				else
 				{
@@ -358,6 +364,10 @@ void money_manager::handle_command()
 				}
 			}
 
+			io.write_output("\n");
+
+			io.reset_color();
+
 			lf.close();
 		}
 	}
@@ -365,30 +375,30 @@ void money_manager::handle_command()
 	{
 		if (system_loaded)
 		{
-			io.write_output(sys.to_string() + "\n");
+			io.write_command_output(sys.to_string());
 		}
 		else
 		{
-			io.write_output("You have no system currently. Use command init to create one.\n");
+			io.write_command_output(command_interpreter::apply_color("You have no system currently. Use command init to create one.", command_interpreter::f_red));
 		}
 	}
 	else if (cmd.name == "init")
 	{
 		if (system_loaded)
 		{
-			io.write_output("Cannot init a system when there is already one.\n");
+			io.write_command_output(command_interpreter::apply_color("Cannot init a system when there is already one.", command_interpreter::f_red));
 		}
 		else
 		{
 			if (cmd.arguments.size() < 1 || cmd.arguments.size() > 2) // incorrect number of arguments
 			{
-				io.write_output("Incorrect number of arguments.\n");
+				io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments.", command_interpreter::f_red));
 			}
 			else
 			{
 				if (!std::regex_match(cmd.arguments[0], amount_regex_obj)) // check arg1
 				{
-					io.write_output("Expected to have a non-negative number for arg1, but an incorrect one is supplied.\n");
+					io.write_command_output(command_interpreter::apply_color("Expected to have a non-negative number for arg1, but an incorrect one is supplied.", command_interpreter::f_red));
 				}
 				else
 				{
@@ -399,14 +409,14 @@ void money_manager::handle_command()
 					{
 						if (!std::regex_match(cmd.arguments[1], amount_regex_obj)) // check arg2
 						{
-							io.write_output("Expected to have a non-negative number for arg2, but an incorrect one is supplied.\n");
+							io.write_command_output(command_interpreter::apply_color("Expected to have a non-negative number for arg2, but an incorrect one is supplied.", command_interpreter::f_red));
 						}
 						else
 						{
 							exp = std::atof(cmd.arguments[1].c_str());
 							if (exp > amount)
 							{
-								io.write_output("Expectation cannot be bigger than cash initially\n");
+								io.write_command_output(command_interpreter::apply_color("Expectation cannot be bigger than cash initially", command_interpreter::f_red));
 								return;
 							}
 						}
@@ -423,7 +433,7 @@ void money_manager::handle_command()
 					}
 
 					system_loaded = true;
-					io.write_output("System initialized successfully!\n");
+					io.write_command_output(command_interpreter::apply_color("System initialized successfully!", command_interpreter::f_green));
 				}
 			}
 		}
@@ -432,15 +442,15 @@ void money_manager::handle_command()
 	{
 		if (!system_loaded)
 		{
-			io.write_output("No system exists. Use init to create one first.\n");
+			io.write_command_output(command_interpreter::apply_color("No system exists. Use init to create one first.", command_interpreter::f_red));
 		}
 		else if (cmd.options.size() != 1)
 		{
-			io.write_output("Incorrect number of options! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of options! Please try again.", command_interpreter::f_red));
 		}
 		else if (cmd.arguments.size() < 2 || cmd.arguments.size() > 5)
 		{
-			io.write_output("Incorrect number of arguments! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments! Please try again.", command_interpreter::f_red));
 		}
 		else // correct number of options/arguments 
 		{
@@ -448,7 +458,7 @@ void money_manager::handle_command()
 
 			if (!std::regex_match(cmd.arguments[1], amount_regex_obj))	// check argument amount
 			{
-				io.write_output("Expect a non-negative number for argument 2, but an incorrect one is supplied.\n");
+				io.write_command_output(command_interpreter::apply_color("Expect a non-negative number for argument 2, but an incorrect one is supplied.", command_interpreter::f_red));
 			}
 			else // arg2 is correct
 			{
@@ -457,13 +467,13 @@ void money_manager::handle_command()
 				if (opt == "-a" || opt == "--accidental-income")
 				{
 					sys.add_accidental_income(amount, cmd.arguments[0]);
-					io.write_output("Accidental income " + cmd.arguments[0] + " added successfully.\n");
+					io.write_command_output(command_interpreter::apply_color("Accidental income " + cmd.arguments[0] + " added successfully.", command_interpreter::f_green));
 				}
 				else // check other arguments
 				{
 					if (cmd.arguments.size() == 2) // need at least 3 arguments now
 					{
-						io.write_output("Incorrect number of arguments! Please try again.\n");
+						io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments! Please try again.", command_interpreter::f_red));
 					}
 					else
 					{
@@ -472,7 +482,7 @@ void money_manager::handle_command()
 						int arg3 = std::atoi(cmd.arguments[2].c_str());
 						if (arg3 < 0 || arg3 > 4) // arg3 is incorrect
 						{
-							io.write_output("Expect a number in the range [0,4] for argument 3, but an incorrect one is supplied.\n");
+							io.write_command_output(command_interpreter::apply_color("Expect a number in the range [0,4] for argument 3, but an incorrect one is supplied.", command_interpreter::f_red));
 						}
 						else // arg3 is correct
 						{
@@ -484,12 +494,12 @@ void money_manager::handle_command()
 								start_date = string_to_date(cmd.arguments[3]);
 								if (zero_date == start_date)
 								{
-									io.write_output("Expect a date for argument 4, but an incorrect one is supplied.\n");
+									io.write_command_output(command_interpreter::apply_color("Expect a date for argument 4, but an incorrect one is supplied.", command_interpreter::f_red));
 									return;
 								}
 								else if (start_date < sys.get_date())
 								{
-									io.write_output("Must provide a date later or equal to today for argument 4\n");
+									io.write_command_output("Must provide a date later or equal to today for argument 4");
 									return;
 								}
 
@@ -498,7 +508,7 @@ void money_manager::handle_command()
 									simulation_end = string_to_date(cmd.arguments[3]);
 									if (zero_date == simulation_end)
 									{
-										io.write_output("Expect a date for argument 5, but an incorrect one is supplied.\n");
+										io.write_command_output(command_interpreter::apply_color("Expect a date for argument 5, but an incorrect one is supplied.", command_interpreter::f_red));
 										return;
 									}
 									else
@@ -506,7 +516,7 @@ void money_manager::handle_command()
 										auto sim_duration = simulation_end - sys.get_date();
 										if (sim_duration < 365 || sim_duration > 365 * 5 + 1)
 										{
-											io.write_output("Simulation duration must be between 1 year to 5 years.\n");
+											io.write_command_output(command_interpreter::apply_color("Simulation duration must be between 1 year to 5 years.", command_interpreter::f_red));
 											return;
 										}
 									}
@@ -528,11 +538,11 @@ void money_manager::handle_command()
 							{
 								if (sys.emplace_fixed_income(cmd.arguments[0], amount, start_date, type))
 								{
-									io.write_output("Fixed income " + cmd.arguments[0] + " added successfully.\n");
+									io.write_command_output(command_interpreter::apply_color("Fixed income " + cmd.arguments[0] + " added successfully.", command_interpreter::f_green));
 								}
 								else
 								{
-									io.write_output("Cannot add fixed income " + cmd.arguments[0] + " because the name is already used.\n");
+									io.write_command_output(command_interpreter::apply_color("Cannot add fixed income " + cmd.arguments[0] + " because the name is already used.", command_interpreter::f_red));
 								}
 							}
 							else // a proposal is to be added
@@ -548,9 +558,9 @@ void money_manager::handle_command()
 									if (!sim.aborted) // safe state guaranteed
 									{
 										auto avg_money = std::to_string(sim.sim_avg_amount);
-										io.write_output(
+										io.write_command_output(
 											"The program decides that the proposal can be added, and the average amount of money you can spend each day at most in one year (if the proposal was added ) would be " +
-											avg_money + ".\n Proceed to add the proposal (Y/N)?\n");
+											avg_money + ".\n Proceed to add the proposal (Y/N)?");
 
 										std::string reply;
 										while (true)
@@ -560,11 +570,11 @@ void money_manager::handle_command()
 											{
 												if (!sys.emplace_p_proposal(cmd.arguments[0], amount, start_date, type))
 												{
-													io.write_output("Cannot add the periodic proposal as the name is already used.\n");
+													io.write_command_output(command_interpreter::apply_color("Cannot add the periodic proposal as the name is already used.", command_interpreter::f_red));
 												}
 												else
 												{
-													io.write_output("Periodic proposal " + cmd.arguments[0] + " added successfully.\n");
+													io.write_command_output(command_interpreter::apply_color("Periodic proposal " + cmd.arguments[0] + " added successfully.",command_interpreter::f_green));
 												}
 												break;
 											}
@@ -575,7 +585,7 @@ void money_manager::handle_command()
 											}
 											else
 											{
-												io.write_output("Please type one of y,Y,n,N.\n");
+												io.write_command_output("Please type one of y,Y,n,N.");
 											}
 										}
 									}
@@ -584,7 +594,7 @@ void money_manager::handle_command()
 										io.write_output(
 											"The program cannot allow the proposal to be added, because it calculated that at " +
 											sim.aborted_date.to_string() + " the system would not be in a safe state with cash of only " +
-											std::to_string(sim.aborted_cash) + " if the proposal was added.\n");
+											std::to_string(sim.aborted_cash) + " if the proposal was added.");
 									}
 								}
 								else if (opt == "-o" || opt == "--one-time-proposal")
@@ -595,9 +605,9 @@ void money_manager::handle_command()
 									if (!sim.aborted) // safe state guaranteed
 									{
 										auto avg_money = std::to_string(sim.sim_avg_amount);
-										io.write_output(
+										io.write_command_output(
 											"The program decides that the proposal can be added, and the average amount of money you can spend each day at most in one year is " +
-											avg_money + ".\n Proceed to add the proposal (Y/N)?\n");
+											avg_money + ".\n Proceed to add the proposal (Y/N)?");
 
 										std::string reply;
 										while (true)
@@ -607,11 +617,11 @@ void money_manager::handle_command()
 											{
 												if (!sys.emplace_ot_proposal(cmd.arguments[0], amount, start_date, type))
 												{
-													io.write_output("Cannot add the one-time proposal as the name is already used.\n");
+													io.write_command_output(command_interpreter::apply_color("Cannot add the one-time proposal as the name is already used.", command_interpreter::f_red));
 												}
 												else
 												{
-													io.write_output("One-time proposal " + cmd.arguments[0] + " added successfully.\n");
+													io.write_command_output(command_interpreter::apply_color("One-time proposal " + cmd.arguments[0] + " added successfully.", command_interpreter::f_green));
 												}
 												break;
 											}
@@ -622,7 +632,7 @@ void money_manager::handle_command()
 											}
 											else
 											{
-												io.write_output("Please type one of y,Y,n,N.\n");
+												io.write_command_output("Please type one of y,Y,n,N.");
 											}
 										}
 									}
@@ -631,12 +641,12 @@ void money_manager::handle_command()
 										io.write_output(
 											"The program cannot allow the proposal to be added, because it calculated that at " +
 											sim.aborted_date.to_string() + " the system would not be in a safe state with cash of only " +
-											std::to_string(sim.aborted_cash) + " if the proposal was added.\n");
+											std::to_string(sim.aborted_cash) + " if the proposal was added.");
 									}
 								}
 								else
 								{
-									io.write_output("Incorrect option supplied! Please try again.\n");
+									io.write_command_output(command_interpreter::apply_color("Incorrect option supplied! Please try again.", command_interpreter::f_red));
 								}
 							}
 						}
@@ -649,15 +659,15 @@ void money_manager::handle_command()
 	{
 		if (!system_loaded)
 		{
-			io.write_output("No system exists. Use init to create one first.\n");
+			io.write_command_output(command_interpreter::apply_color("No system exists. Use init to create one first.", command_interpreter::f_red));
 		}
 		else if (cmd.options.size() != 1)
 		{
-			io.write_output("Incorrect number of options! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of options! Please try again.", command_interpreter::f_red));
 		}
 		else if (cmd.arguments.size() < 2 || cmd.arguments.size() > 3)
 		{
-			io.write_output("Incorrect number of arguments! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments! Please try again.", command_interpreter::f_red));
 		}
 		else
 		{
@@ -665,7 +675,7 @@ void money_manager::handle_command()
 
 			if (!std::regex_match(cmd.arguments[1], amount_regex_obj))	// check argument amount
 			{
-				io.write_output("Expect a non-negative number for argument 2, but an incorrect one is supplied.\n");
+				io.write_command_output(command_interpreter::apply_color("Expect a non-negative number for argument 2, but an incorrect one is supplied.", command_interpreter::f_red));
 			}
 			else
 			{
@@ -680,7 +690,7 @@ void money_manager::handle_command()
 				{
 					if (!std::regex_match(cmd.arguments[2], integer_regex_obj))
 					{
-						io.write_output("Expect an integer for argument 3, but an incorrect one is supplied.\n");
+						io.write_command_output(command_interpreter::apply_color("Expect an integer for argument 3, but an incorrect one is supplied.", command_interpreter::f_red));
 						return;
 					}
 					else
@@ -688,7 +698,7 @@ void money_manager::handle_command()
 						int days = std::atoi(cmd.arguments[2].c_str());
 						if (days < 365 || days > 365 * 5 + 1)
 						{
-							io.write_output("Simulation duration must be between 1 year and 5 years.\n");
+							io.write_command_output(command_interpreter::apply_color("Simulation duration must be between 1 year and 5 years.", command_interpreter::f_red));
 							return;
 						}
 						else
@@ -713,15 +723,15 @@ void money_manager::handle_command()
 
 							if (sim.aborted)
 							{
-								io.write_output("The program cannot allow the amount to be changed, because it calculated that at " +
+								io.write_command_output("The program cannot allow the amount to be changed, because it calculated that at " +
 									sim.aborted_date.to_string() + " the system would not be in a safe state with cash of only " +
-									std::to_string(sim.aborted_cash) + " if the changed was passed.\n");
+									std::to_string(sim.aborted_cash) + " if the changed was passed.");
 							}
 							else
 							{
-								io.write_output(
+								io.write_command_output(
 									"The program decides that the changed can be passed, and the average amount of money you can spend each day at most in one year is " +
-									std::to_string(sim.sim_avg_amount) + ".\n Proceed with the change (Y/N)?\n");
+									std::to_string(sim.sim_avg_amount) + ".\n Proceed with the change (Y/N)?");
 
 								std::string reply;
 								while (true)
@@ -730,7 +740,7 @@ void money_manager::handle_command()
 									if (reply == "y" || reply == "Y")
 									{
 										pe->amount = amount;
-										io.write_output("Amount set successfully\n");
+										io.write_command_output(command_interpreter::apply_color(("Amount set successfully"), command_interpreter::f_green));
 										break;
 									}
 									else if (reply == "n" || reply == "N")
@@ -748,7 +758,7 @@ void money_manager::handle_command()
 						else // do the change.
 						{
 							pe->amount = amount;
-							io.write_output("Amount set successfully\n");
+							io.write_command_output(command_interpreter::apply_color(("Amount set successfully"), command_interpreter::f_green));
 						}
 					}
 				}
@@ -767,13 +777,13 @@ void money_manager::handle_command()
 							{
 								io.write_output("The program cannot allow the amount to be changed, because it calculated that at " +
 									sim.aborted_date.to_string() + " the system would not be in a safe state with cash of only " +
-									std::to_string(sim.aborted_cash) + " if the changed was passed.\n");
+									std::to_string(sim.aborted_cash) + " if the changed was passed.");
 							}
 							else
 							{
-								io.write_output(
+								io.write_command_output(
 									"The program decides that the changed can be passed, and the average amount of money you can spend each day at most in one year is " +
-									std::to_string(sim.sim_avg_amount) + ".\n Proceed with the change (Y/N)?\n");
+									std::to_string(sim.sim_avg_amount) + ".\n Proceed with the change (Y/N)?");
 
 								std::string reply;
 								while (true)
@@ -782,7 +792,7 @@ void money_manager::handle_command()
 									if (reply == "y" || reply == "Y")
 									{
 										pe->amount = amount;
-										io.write_output("Amount set successfully\n");
+										io.write_command_output(command_interpreter::apply_color(("Amount set successfully"), command_interpreter::f_green));
 										break;
 									}
 									else if (reply == "n" || reply == "N")
@@ -800,7 +810,7 @@ void money_manager::handle_command()
 						else // do the change.
 						{
 							pe->amount = amount;
-							io.write_output("Amount set successfully\n");
+							io.write_command_output(command_interpreter::apply_color(("Amount set successfully"), command_interpreter::f_green));
 						}
 					}
 				}
@@ -817,15 +827,15 @@ void money_manager::handle_command()
 
 							if (sim.aborted)
 							{
-								io.write_output("The program cannot allow the amount to be changed, because it calculated that at " +
+								io.write_command_output("The program cannot allow the amount to be changed, because it calculated that at " +
 									sim.aborted_date.to_string() + " the system would not be in a safe state with cash of only " +
-									std::to_string(sim.aborted_cash) + " if the changed was passed.\n");
+									std::to_string(sim.aborted_cash) + " if the changed was passed.");
 							}
 							else
 							{
-								io.write_output(
+								io.write_command_output(
 									"The program decides that the changed can be passed, and the average amount of money you can spend each day at most in one year is " +
-									std::to_string(sim.sim_avg_amount) + ".\n Proceed with the change (Y/N)?\n");
+									std::to_string(sim.sim_avg_amount) + ".\n Proceed with the change (Y/N)?");
 
 								std::string reply;
 								while (true)
@@ -834,7 +844,7 @@ void money_manager::handle_command()
 									if (reply == "y" || reply == "Y")
 									{
 										pe->amount = amount;
-										io.write_output("Amount set successfully\n");
+										io.write_command_output(command_interpreter::apply_color(("Amount set successfully"), command_interpreter::f_green));
 										break;
 									}
 									else if (reply == "n" || reply == "N")
@@ -852,13 +862,13 @@ void money_manager::handle_command()
 						else // do the change.
 						{
 							pe->amount = amount;
-							io.write_output("Amount set successfully\n");
+							io.write_command_output(command_interpreter::apply_color(("Amount set successfully"), command_interpreter::f_green));
 						}
 					}
 				}
 				else
 				{
-					io.write_output("Incorrect argument supplied\n");
+					io.write_command_output(command_interpreter::apply_color("Incorrect argument supplied", command_interpreter::f_red));
 				}
 			}
 		}
@@ -867,19 +877,21 @@ void money_manager::handle_command()
 	{
 		if (!system_loaded)
 		{
-			io.write_output("No system exists. Use init to create one first.\n");
+			io.write_command_output(command_interpreter::apply_color("No system exists. Use init to create one first.", command_interpreter::f_red));
 		}
 		else if (cmd.arguments.size() != 1)
 		{
-			io.write_output("Incorrect number of arguments! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments! Please try again.", command_interpreter::f_red));
 		}
 		else if (cmd.options.size() != 1)
 		{
-			io.write_output("Incorrect number of options! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of options! Please try again.", command_interpreter::f_red));
 		}
 		else
 		{
 			const auto& opt = cmd.options[0];
+
+			io.set_color(command_interpreter::f_yellow);
 			if (opt == "-p" || opt == "--periodic-proposal")
 			{
 				auto pe = sys.find_p_proposal(cmd.arguments[0]);
@@ -890,7 +902,7 @@ void money_manager::handle_command()
 				}
 				else
 				{
-					io.write_output("Event not found.\n");
+					io.write_command_output(command_interpreter::apply_color("Event not found.", command_interpreter::f_red));
 				}
 			}
 			else if (opt == "-o" || opt == "--one-time-proposal")
@@ -903,7 +915,7 @@ void money_manager::handle_command()
 				}
 				else
 				{
-					io.write_output("Event not found.\n");
+					io.write_command_output(command_interpreter::apply_color("Event not found.", command_interpreter::f_red));
 				}
 			}
 			else if (opt == "-f" || opt == "--fixed-income")
@@ -916,24 +928,26 @@ void money_manager::handle_command()
 				}
 				else
 				{
-					io.write_output("Event not found.\n");
+					io.write_command_output(command_interpreter::apply_color("Event not found.", command_interpreter::f_red));
 				}
 			}
+
+			io.reset_color();
 		}
 	}
 	else if (cmd.name == "remove")
 	{
 		if (!system_loaded)
 		{
-			io.write_output("No system exists. Use init to create one first.\n");
+			io.write_command_output(command_interpreter::apply_color("No system exists. Use init to create one first.", command_interpreter::f_red));
 		}
 		else if (cmd.arguments.size() != 1)
 		{
-			io.write_output("Incorrect number of arguments! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments! Please try again.", command_interpreter::f_red));
 		}
 		else if (cmd.options.size() != 1)
 		{
-			io.write_output("Incorrect number of options! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of options! Please try again.", command_interpreter::f_red));
 		}
 		else
 		{
@@ -944,11 +958,11 @@ void money_manager::handle_command()
 				bool b = sys.remove_p_proposal(cmd.arguments[0]);
 				if (b)
 				{
-					io.write_output(std::string("Periodic Proposal: ") + cmd.arguments[0] + " removed.\n");
+					io.write_command_output(command_interpreter::apply_color(std::string("Periodic Proposal: ") + cmd.arguments[0] + " removed successfully.", command_interpreter::f_green));
 				}
 				else
 				{
-					io.write_output("Event not found.\n");
+					io.write_command_output(command_interpreter::apply_color("Event not found.", command_interpreter::f_red));
 				}
 			}
 			else if (opt == "-o" || opt == "--one-time-proposal")
@@ -956,11 +970,11 @@ void money_manager::handle_command()
 				bool b = sys.remove_ot_proposal(cmd.arguments[0]);
 				if (b)
 				{
-					io.write_output(std::string("One-time Proposal: ") + cmd.arguments[0] + " removed.\n");
+					io.write_command_output(command_interpreter::apply_color(std::string("One-time Proposal: ") + cmd.arguments[0] + " removed successfully.", command_interpreter::f_green));
 				}
 				else
 				{
-					io.write_output("Event not found.\n");
+					io.write_command_output(command_interpreter::apply_color("Event not found.", command_interpreter::f_red));
 				}
 			}
 			else if (opt == "-f" || opt == "--fixed-income")
@@ -968,11 +982,11 @@ void money_manager::handle_command()
 				bool b = sys.remove_fixed_income(cmd.arguments[0]);
 				if (b)
 				{
-					io.write_output(std::string("Fixed income: ") + cmd.arguments[0] + " removed.\n");
+					io.write_command_output(command_interpreter::apply_color(std::string("Fixed income: ") + cmd.arguments[0] + " removed successfully.", command_interpreter::f_green));
 				}
 				else
 				{
-					io.write_output("Event not found.\n");
+					io.write_command_output(command_interpreter::apply_color("Event not found.", command_interpreter::f_red));
 				}
 			}
 		}
@@ -981,66 +995,127 @@ void money_manager::handle_command()
 	{
 		if (!system_loaded)
 		{
-			io.write_output("No system exists. Use init to create one first.\n");
-		}
-		else if (cmd.arguments.size() != 0)
-		{
-			io.write_output("Incorrect number of arguments! Please try again.\n");
-		}
-		else if (cmd.options.size() != 1)
-		{
-			io.write_output("Incorrect number of options! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("No system exists. Use init to create one first.", command_interpreter::f_red));
 		}
 		else
 		{
-			const auto& opt = cmd.options[0];
-			if (opt == "-p" || opt == "--periodic-proposal")
+			if (cmd.arguments.size() != 0)
 			{
-				if (sys.get_p_proposals().empty())
+				io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments! Please try again.", command_interpreter::f_red));
+			}
+			else if (cmd.options.size() != 1)
+			{
+				io.write_command_output(command_interpreter::apply_color("Incorrect number of options! Please try again.", command_interpreter::f_red));
+			}
+			else
+			{
+				io.set_color(command_interpreter::f_yellow);
+
+				const auto& opt = cmd.options[0];
+				if (opt == "-p" || opt == "--periodic-proposal")
 				{
-					io.write_output("No periodic proposals exist.\n");
-				}
-				else
-				{
-					io.write_output(std::string("Periodic proposals: \n"));
-					for (const auto& [n, e] : sys.get_p_proposals())
+					if (sys.get_p_proposals().empty())
 					{
-						io.write_output(e.to_string());
-						io.write_output("\n");
+						io.write_command_output(command_interpreter::apply_color("No periodic proposals exist.", command_interpreter::f_red));
+					}
+					else
+					{
+						io.write_output(std::string("Periodic proposals: \n"));
+						for (const auto& [n, e] : sys.get_p_proposals())
+						{
+							io.write_output(e.to_string());
+							io.write_output("\n");
+						}
 					}
 				}
-			}
-			else if (opt == "-o" || opt == "--one-time-proposal")
-			{
-				if (sys.get_ot_proposals().empty())
+				else if (opt == "-o" || opt == "--one-time-proposal")
 				{
-					io.write_output("No one-time proposals exist.\n");
-				}
-				else
-				{
-					io.write_output(std::string("One-time proposals: \n"));
-					for (const auto& [n, e] : sys.get_ot_proposals())
+					if (sys.get_ot_proposals().empty())
 					{
-						io.write_output(e.to_string());
-						io.write_output("\n");
-					}					
-				}
-			}
-			else if (opt == "-f" || opt == "--fixed-income")
-			{
-				if (sys.get_fixed_incomes().empty())
-				{
-					io.write_output("No fixed incomes exist.\n");
-				}
-				else
-				{
-					io.write_output(std::string("Fixed incomes: \n"));
-					for (const auto& [n, e] : sys.get_fixed_incomes())
+						io.write_command_output(command_interpreter::apply_color("No one-time proposals exist.", command_interpreter::f_red));
+					}
+					else
 					{
-						io.write_output(e.to_string());
-						io.write_output("\n");
-					}				
+						io.write_output(std::string("One-time proposals: \n"));
+						for (const auto& [n, e] : sys.get_ot_proposals())
+						{
+							io.write_output(e.to_string());
+							io.write_output("\n");
+						}
+					}
 				}
+				else if (opt == "-f" || opt == "--fixed-income")
+				{
+					if (sys.get_fixed_incomes().empty())
+					{
+						io.write_command_output(command_interpreter::apply_color("No fixed incomes exist.", command_interpreter::f_red));
+					}
+					else
+					{
+						io.write_output(std::string("Fixed incomes: \n"));
+						for (const auto& [n, e] : sys.get_fixed_incomes())
+						{
+							io.write_output(e.to_string());
+							io.write_output("\n");
+						}
+					}
+				}
+				else if(opt == "-a" || opt == "--all")
+				{
+					// p_p
+					if (sys.get_p_proposals().empty())
+					{
+						io.write_output(command_interpreter::apply_color("No periodic proposals exist.\n", command_interpreter::f_red));
+						// the previous line will reset the color
+						io.set_color(command_interpreter::f_yellow);
+					}
+					else
+					{
+						io.write_output(std::string("Periodic proposals: \n"));
+						for (const auto& [n, e] : sys.get_p_proposals())
+						{
+							io.write_output(e.to_string());
+							io.write_output("\n");
+						}
+					}
+
+					// ot_p 
+					if (sys.get_ot_proposals().empty())
+					{
+						io.write_output(command_interpreter::apply_color("No one-time proposals exist.\n", command_interpreter::f_red));
+						// rhe previous line will reset the color
+						io.set_color(command_interpreter::f_yellow);
+					}
+					else
+					{
+						io.write_output(std::string("One-time proposals: \n"));
+						for (const auto& [n, e] : sys.get_ot_proposals())
+						{
+							io.write_output(e.to_string());
+							io.write_output("\n");
+						}
+					}
+
+					// incomes
+					if (sys.get_fixed_incomes().empty())
+					{
+						io.write_output(command_interpreter::apply_color("No fixed incomes exist.\n", command_interpreter::f_red));
+						// rhe previous line will reset the color
+						io.set_color(command_interpreter::f_yellow);
+					}
+					else
+					{
+						io.write_output(std::string("Fixed incomes: \n"));
+						for (const auto& [n, e] : sys.get_fixed_incomes())
+						{
+							io.write_output(e.to_string());
+							io.write_output("\n");
+						}
+					}
+				}
+
+				io.write_output("\n");
+				io.reset_color();
 			}
 		}
 	}
@@ -1050,15 +1125,15 @@ void money_manager::handle_command()
 
 		if (!system_loaded)
 		{
-			io.write_output("No system exists. Use init to create one first.\n");
+			io.write_command_output(command_interpreter::apply_color("No system exists. Use init to create one first.", command_interpreter::f_red));
 		}
 		else if (!cmd.options.empty())
 		{
-			io.write_output("Incorrect number of options! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of options! Please try again.", command_interpreter::f_red));
 		}
 		else if (cmd.arguments.size() > 1)
 		{
-			io.write_output("Incorrect number of arguments! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments! Please try again.", command_interpreter::f_red));
 		}
 		else if (cmd.arguments.size() == 0) // use default value
 		{
@@ -1069,7 +1144,7 @@ void money_manager::handle_command()
 			sim_end = string_to_date(cmd.arguments[0]);
 			if (zero_date == sim_end)
 			{
-				io.write_output("Expect to have a date for arg1, but an incorrect one is supplied.\n");
+				io.write_command_output(command_interpreter::apply_color("Expect to have a date for arg1, but an incorrect one is supplied.", command_interpreter::f_red));
 				return;
 			}
 			else // make sure the duration is within our expectation
@@ -1077,7 +1152,7 @@ void money_manager::handle_command()
 				int days = sim_end - sys.get_date();
 				if (days < 365 || days > 365 * 5 + 1) // out of range
 				{
-					io.write_output("The simulation duration must be between 1 year to 5 years.\n");
+					io.write_command_output(command_interpreter::apply_color("The simulation duration must be between 1 year to 5 years.", command_interpreter::f_red));
 					return;
 				}
 			}
@@ -1088,15 +1163,15 @@ void money_manager::handle_command()
 
 		if (sim.aborted)
 		{
-			io.write_output(
+			io.write_command_output(
 				"The program calculated that at " +
 				sim.aborted_date.to_string() + " the system wwill not be in a safe state with cash of only " +
-				std::to_string(sim.aborted_cash) + ".\n");
+				std::to_string(sim.aborted_cash));
 		}
 		else
 		{
-			io.write_output(
-				"The program guarantees that the system will remain in a safe state until " + sim_end.to_string() + ".\n"
+			io.write_command_output(
+				"The program guarantees that the system will remain in a safe state until " + sim_end.to_string()
 			);
 		}
 	}
@@ -1106,15 +1181,15 @@ void money_manager::handle_command()
 
 		if (!system_loaded)
 		{
-			io.write_output("No system exists. Use init to create one first.\n");
+			io.write_command_output(command_interpreter::apply_color("No system exists. Use init to create one first.", command_interpreter::f_red));
 		}
 		else if (!cmd.options.empty())
 		{
-			io.write_output("Incorrect number of options! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of options! Please try again.", command_interpreter::f_red));
 		}
 		else if (cmd.arguments.size() > 1)
 		{
-			io.write_output("Incorrect number of arguments! Please try again.\n");
+			io.write_command_output(command_interpreter::apply_color("Incorrect number of arguments! Please try again.", command_interpreter::f_red));
 		}
 		else if (cmd.arguments.size() == 0) // use default value
 		{
@@ -1125,7 +1200,7 @@ void money_manager::handle_command()
 			pre_end = string_to_date(cmd.arguments[0]);
 			if (zero_date == pre_end)
 			{
-				io.write_output("Expect to have a date for arg1, but an incorrect one is supplied.\n");
+				io.write_command_output(command_interpreter::apply_color("Expect to have a date for arg1, but an incorrect one is supplied.", command_interpreter::f_red));
 				return;
 			}
 			else // make sure the duration is within our expectation
@@ -1133,7 +1208,7 @@ void money_manager::handle_command()
 				int days = pre_end - sys.get_date();
 				if (days < 30 || days > 365 ) // out of range
 				{
-					io.write_output("The prediction duration must be between 1 month to 1 year.\n");
+					io.write_command_output(command_interpreter::apply_color("The prediction duration must be between 1 month to 1 year.", command_interpreter::f_red));
 					return;
 				}
 			}
@@ -1142,13 +1217,22 @@ void money_manager::handle_command()
 		double pre_num = sys.predict(pre_end);
 		if (pre_num >= 0)
 		{
-			io.write_output("The program predicts that the approximate average amount of money you can use each day is " +
-				std::to_string(pre_num) + " until " + pre_end.to_string() + ".\n");
+			io.write_command_output("The program predicts that the approximate average amount of money you can use each day is " +
+				std::to_string(pre_num) + " until " + pre_end.to_string());
 		}
 		else
 		{
-			io.write_output("The program approximately predicts that you can use no money and have to earn more until " + pre_end.to_string() + ".\n");
+			io.write_command_output("The program approximately predicts that you can use no money and have to earn more until " + pre_end.to_string() + ".");
 		}
+	}
+	else if (cmd.name.empty()) 
+	{
+		// very rarely the program will read an empty string that comes from God knows where (And how does it come at all??). 
+		// Don't know why. Pretend as if it doesn't happen.
+	}
+	else
+	{
+		io.write_command_output(command_interpreter::apply_color(cmd.name + " is not a command.\n", command_interpreter::f_red));
 	}
 }
 
