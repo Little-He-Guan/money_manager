@@ -55,6 +55,18 @@ Therefore, it is useful that the program can help the user do that. The program 
 \subsection{Event}
 An \emph{(financial) event} is a proposal or an income.
 
+\subsubsection{Recording}
+Every event is recorded when it takes place. For accidental incomes, each is recorded immediately when it is added. For others, each is recorded when the program detects that it needs to happen now (when its end has been reached).
+
+\subsubsection{Actual}
+One always-true thing is that, for events (especially periodic ones), what we tell the program before they happen are all of our anticipations. It is highly possible that we will get a (slightly) different number when they happen. 
+
+Therefore, the program provides the possibility for the user to provide the actual value of an event \emph{at the day before its end}. If not provided when the event takes effect, the actual value is the same as the anticipated amount.
+
+If the program detects that at the current day some events are ending tomorrow, but actual values are not provided for them, a message to inform the user that they can be provided will be shown in the state.
+
+\paragraph{Note:} In simulations and predictions actual number will \emph{not} be used.
+
 \section{Calculation rules} \label{sec:cal.rule}
 First let's review some key points and give symbols to them: The user will always have an expectation ($E$) of the lowest amount of money. The user will have a list (set) of proposals that are currently effective for each time duration:
 \begin{align*}

@@ -2,17 +2,21 @@
 //
 
 #include "../money_manager/money_manager.h"
+#include "command_line_interpreter.h"
 #include <iostream>
 
 int main()
 {
     money_manager mgr;
+    command_line_interpreter cli(mgr);
 
     try
     {
-        mgr.start();
+        cli.start_cli();
 
-        mgr.serve();
+        cli.serve();
+
+        cli.exit_cli();
     }
     catch (const std::runtime_error& err)
     {

@@ -3,6 +3,9 @@
 #include "system.h"
 #include "command_interpreter.h"
 
+/*
+* All the core data the program uses
+*/
 class money_manager final
 {
 public:
@@ -11,7 +14,7 @@ public:
 
 	/*
 	* Tries to load the program (mainly the system) from the save files
-	* @returns true if successfully loaded
+	* @returns true iff successfully loaded
 	* @throws std::runtime_error if unexpected error occurs
 	*/
 	bool load_from_file();
@@ -25,15 +28,11 @@ public:
 	/*
 	* Starts the program. Prepare all the things needed.
 	* After a call to this, the program should be able to serve.
+	* 
+	* @returns true iff the system is loaded from file
 	* @throws std::runtime_error if unexpected error occurs
 	*/
-	void start();
-
-	/*
-	* Serves the user until he executes the exit command
-	* @throws std::runtime_error if unexpected error occurs
-	*/
-	void serve();
+	bool start();
 
 	/*
 	* Exits the program.
@@ -41,17 +40,14 @@ public:
 	*/
 	void shut_down();
 
-private:
-	/*
-	* Handles the current command.
-	*/
+public:
 	void handle_command();
 
 	// @returns the current date in reality, or zero_date if an unexpected error occurs
 	static date get_current_date();
 
 
-private:
+public:
 	financial_system sys;
 	command_interpreter io;
 
@@ -61,6 +57,10 @@ private:
 
 	bool system_loaded = false;
 
-private:
-	static constexpr auto version_str = "0.99";
+public:
+	static constexpr auto version_str = "1.1";
 };
+
+// non-negative integer
+constexpr auto integer_regex = "[\\d]+";
+extern const std::regex integer_regex_obj;

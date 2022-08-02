@@ -62,6 +62,9 @@ bool periodic_event::update(date d)
 		start = end;
 		calculate_end();
 
+		// an acutal is only applicable to a period, not to all.
+		actual = amount;
+
 		return true;
 	}
 	else

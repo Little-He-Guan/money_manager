@@ -139,17 +139,37 @@ One of the following:
 \end{itemize}
 
 \subsection{Command set}
-The command \texttt{set} sets the amount of an event in the system
+The command \texttt{set} sets some value of an event or of the system.
 \subsubsection{Usage}
 \begin{center}
-	\texttt{find --one-time-proposal (-o) | --periodic-proposal (-p) | --fixed-income (-f)} \cmdarg{event-name}  \cmdarg{new-amount} \optarg{simulation-duration}
+	(1) \texttt{set --one-time-proposal (-o) | --periodic-proposal (-p) | --fixed-income (-f)} \optopt{--actual} \cmdarg{event-name} \cmdarg{amount} \optarg{simulation-duration}
+	
+	(2) \texttt{set --expectation | --default-simulation-duration | --default-prediction-duration} \cmdarg{value}
 \end{center}
+
+\paragraph{Usages}
+\begin{description}
+	\item[Usage (1)] Sets the amount/actual of an event
+	\item[Usage (2)] Sets data of the system
+\end{description}
+
+\paragraph{Options}
+\begin{description}
+	\item[-o] Indicates that the event is an one-time proposal.
+	\item[-p] Indicates that the event is a periodic proposal.
+	\item[-f] Indicates that the event is a fixed income.
+	\item[--actual] Indicates that the command will set the event's actual instead of its amount
+	\item[--expectation] Indicates that the command will set the expectation
+	\item[--default-simulation-duration] Indicates that the command will set the default simulation duration
+	\item[--default-prediction-duration] Indicates that the command will set the default prediction duration
+\end{description}
 
 \paragraph{Arguments}
 \begin{description}
 	\item[event-name] name of the event.
-	\item[new-amount] the amount to be set
+	\item[amount] the amount, or the actual, if option \texttt{--actual} is supplied
 	\item[simulation-duration] The date of the end of the simulation duration (which is current date to end). Ignored if the event is not a proposal. The duration should be between 1 year to 5 years. If not supplied, the program executes the command as if 2 years (730 days) is supplied.
+	\item[value] The new expectation/default simulation duration/default prediction duration.
 \end{description}
 
 \subsubsection{Output}
@@ -157,7 +177,8 @@ One of the following:
 \begin{itemize}
 	\item A messages that shows the amount is successfully changed.
 	\item A message that indicates a failure if the name does not exist.
-	\item A message that shows that the set cannot be allows because the system would not be in a safe state some day.
+	\item A message that shows that the set cannot be allowed because the system would not be in a safe state some day.
+	\item A message that shows that the set cannot be allowed because it has conflicts with the current data or rules.
 \end{itemize}
 
 \subsection{Command simulate}
@@ -242,11 +263,11 @@ The file is in this format:
 	\item First line: A string representation of the \emph{date} (see Subsubsection \ref{subsubsec:cmd:format:inp.format}).
 	\item Second line: \emph{current-cash} \texttt{space} \emph{expectation}
 	\item Third line: \emph{number} of one-time proposals
-	\item Fourth to (4 + number of one-time proposals)\textsuperscript{th} line: each line is a one-time proposal, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{effective-duration-type} 
+	\item Fourth to (4 + number of one-time proposals)\textsuperscript{th} line: each line is a one-time proposal, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{actual} \texttt{space} \emph{effective-duration-type} 
 	\item (4 + number of one-time proposals + 1)\textsuperscript{th} line: \emph{number} of periodic proposals
-	\item (4 + number of one-time proposals + 2)\textsuperscript{th} to (4 + number of one-time proposals + 1 + number of periodic proposals)\textsuperscript{th} line: each line is a periodic proposal, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{effective-duration-type} 
+	\item (4 + number of one-time proposals + 2)\textsuperscript{th} to (4 + number of one-time proposals + 1 + number of periodic proposals)\textsuperscript{th} line: each line is a periodic proposal, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{actual} \texttt{space} \emph{effective-duration-type} 
 	\item (4 + number of one-time proposals + 1 + number of periodic proposals + 1)\textsuperscript{th} line: \emph{number} of fixed incomes
-	\item (4 + number of one-time proposals + 1 + number of periodic proposals + 2)\textsuperscript{th} to (4 + number of one-time proposals + 1 + number of periodic proposals + 1 + number of fixed income)\textsuperscript{th} line: each line is a fixed income, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{effective-duration-type} 
+	\item (4 + number of one-time proposals + 1 + number of periodic proposals + 2)\textsuperscript{th} to (4 + number of one-time proposals + 1 + number of periodic proposals + 1 + number of fixed income)\textsuperscript{th} line: each line is a fixed income, in the format: \emph{name} \texttt{space} \emph{start-date} \texttt{space} \emph{end-date} \texttt{space} \emph{amount} \texttt{space} \emph{actual} \texttt{space} \emph{effective-duration-type} 
 \end{enumerate}
 
 \subsection{Log file}

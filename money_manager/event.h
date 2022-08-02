@@ -25,16 +25,22 @@ public:
 	financial_event(double a, date s, effective_duration t, const std::string& n):
 		name(&n), amount(a), start(s), type(t)
 	{
+		actual = amount;
 		calculate_end();
 	}
 	financial_event(double a, date s, date e, effective_duration t, const std::string& n) :
-		name(&n), amount(a), start(s), end(e), type(t) {}
+		name(&n), amount(a), start(s), end(e), type(t) 
+	{
+		actual = amount;
+	}
+	financial_event(double a, double ac, date s, date e, effective_duration t, const std::string& n) :
+		name(&n), amount(a), start(s), end(e), type(t), actual(ac) {}
 
 	// although no two events of the same kind should have the same name in A SYSTEM,
 	// we may need to copy a system's state to run a simulation.
 	financial_event(const financial_event& other) :
 		name(other.name),
-		amount(other.amount),
+		amount(other.amount), actual(other.actual),
 		type(other.type),
 		start(other.start), end(other.end) {}
 	// not useful for now
@@ -42,7 +48,7 @@ public:
 
 	financial_event(financial_event&& other) noexcept :
 		name(other.name),
-		amount(other.amount),
+		amount(other.amount), actual(other.actual),
 		type(other.type),
 		start(other.start), end(other.end) {}
 	// not useful for now
@@ -64,6 +70,9 @@ public:
 	*/
 	virtual bool update(date d) { if (d == end) return true; else return false; }
 
+	// @returns true iff a different actual amount is provided for the event
+	bool actual_provided() const { return actual != amount; }
+
 public:
 	virtual std::string to_string() const;
 
@@ -79,6 +88,8 @@ public:
 
 	// the absolute value of the change to cash the event makes, and is used differently depending on the event type
 	double amount;
+	// the actual amount (see documentation)
+	double actual;
 
 	effective_duration type;
 
@@ -96,6 +107,7 @@ class periodic_event : public financial_event
 public:
 	periodic_event(double a, date s, effective_duration t, const std::string& n) : financial_event(a, s, t, n) {}
 	periodic_event(double a, date s, date e, effective_duration t, const std::string& n) : financial_event(a, s, e, t, n) {}
+	periodic_event(double a, double ac, date s, date e, effective_duration t, const std::string& n) : financial_event(a, ac, s, e, t, n) {}
 
 	periodic_event(const periodic_event& other) : financial_event(other) {}
 	periodic_event(periodic_event&& other) noexcept : financial_event(std::move(other)) {}

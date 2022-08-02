@@ -22,7 +22,7 @@ private:
 	// overridden to do nothing
 	void record_event(event_type type, const void* p_event, double ai_amount) override {}
 
-private:
+public:
 	// the date until (not including) which the simulation will be done 
 	date end_date;
 

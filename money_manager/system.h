@@ -148,9 +148,9 @@ protected:
 	* 
 	* @param type: the event type
 	* @param p_event: pointer to the event, or pointer to std::string (the event's name) if the event is an accidental income
-	* @param ai_amount: amount of event if it is an accidental income, or ignored otherwise
+	* @param amount: amount of event if it is an accidental income, or the actual of the event otherwise
 	*/
-	virtual void record_event(event_type type, const void* p_event, double ai_amount = 0.0);
+	virtual void record_event(event_type type, const void* p_event, double amount);
 
 protected:
 	// one-time proposals

@@ -67,9 +67,9 @@ void financial_system::advance_one_day()
 
 		if (completed)
 		{
-			current_cash -= e.amount;
+			current_cash -= e.actual;
 			// record the event
-			record_event(event_type::one_time_proposal, &e);
+			record_event(event_type::one_time_proposal, &e, e.actual);
 
 			// remove the proposal from the the system
 			// and update the iter
@@ -83,18 +83,22 @@ void financial_system::advance_one_day()
 
 	for (auto& [n, e] : p_proposals)
 	{
+		// actual may be updated for period events. Keep a copy of it
+		double prev_act = e.actual;
 		if (e.update(current_date))
 		{
-			current_cash -= e.amount;
-			record_event(event_type::periodic_proposal, &e);
+			current_cash -= prev_act;
+			record_event(event_type::periodic_proposal, &e, prev_act);
 		}
 	}
 	for (auto& [n, e] : incomes)
 	{
+		// actual may be updated for period events. Keep a copy of it
+		double prev_act = e.actual;
 		if (e.update(current_date))
 		{
-			current_cash += e.amount;
-			record_event(event_type::fixed_income, &e);
+			current_cash += prev_act;
+			record_event(event_type::fixed_income, &e, prev_act);
 		}
 	}
 }
@@ -137,11 +141,38 @@ double financial_system::predict(date end)
 
 std::string financial_system::to_string() const
 {
+	int num_possible_actuals = 0;
+
+	for (const auto& [n, e] : p_proposals)
+	{
+		if (e.end == current_date + 1 && !e.actual_provided())
+		{
+			++num_possible_actuals;
+		}
+	}
+
+	for (const auto& [n, e] : incomes)
+	{
+		if (e.end == current_date + 1 && !e.actual_provided())
+		{
+			++num_possible_actuals;
+		}
+	}
+
+	for (const auto& [n, e] : ot_proposals)
+	{
+		if (e.end == current_date + 1 && !e.actual_provided())
+		{
+			++num_possible_actuals;
+		}
+	}
+
 	return 
 		std::string("Today is ") + current_date.to_string() + 
 		".\nYou have currently " + std::to_string(current_cash) + " and your expectation is " + std::to_string(expectation) + 
 		".\nThe system is " + (in_safe_state() ? "currently in a safe state" : "not in a safe state. Consider lower expenses") +
-		(incomes.empty() ? ".\nYou have no fixed incomes, and the money cannot increase." : "");
+		(incomes.empty() ? ".\nYou have no fixed incomes, and the money cannot increase." : "") +
+		(num_possible_actuals != 0 ? ".\nYou have " + std::to_string(num_possible_actuals) + " events that can be applied an acutal now." : "");
 }
 
 std::string financial_system::to_string_short() const
@@ -151,7 +182,7 @@ std::string financial_system::to_string_short() const
 		".\nThe system is " + (in_safe_state() ? "currently in a safe state" : "not in a safe state.");
 }
 
-void financial_system::record_event(event_type type, const void* p_event, double ai_amount)
+void financial_system::record_event(event_type type, const void* p_event, double amount)
 {
 	// each write should start at the end
 	std::ofstream lf(log_file_path, std::ios::out | std::ios::app | std::ios::ate);
@@ -180,18 +211,18 @@ void financial_system::record_event(event_type type, const void* p_event, double
 
 	if (type == financial_system::event_type::accidental_income)
 	{
-		lf << type_str << *reinterpret_cast<const std::string*>(p_event) << " at " << current_date.to_string() << " +" << ai_amount << std::endl;
+		lf << type_str << *reinterpret_cast<const std::string*>(p_event) << " at " << current_date.to_string() << " +" << amount << std::endl;
 	}
 	else
 	{		
 		const auto& e = *reinterpret_cast<const financial_event*>(p_event);
 		if (type == financial_system::event_type::fixed_income) // for incomes it's +
 		{
-			lf << type_str << *e.name << " at " << current_date.to_string() << " +" << e.amount << std::endl;
+			lf << type_str << *e.name << " at " << current_date.to_string() << " +" << amount << std::endl;
 		}
 		else // for proposals it's -
 		{
-			lf << type_str << *e.name << " at " << current_date.to_string() << " -" << e.amount << std::endl;
+			lf << type_str << *e.name << " at " << current_date.to_string() << " -" << amount << std::endl;
 		}
 	}
 
