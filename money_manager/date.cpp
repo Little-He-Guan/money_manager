@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "date.h"
 
 const std::regex date::date_str_regex_obj(date::date_str_regex);

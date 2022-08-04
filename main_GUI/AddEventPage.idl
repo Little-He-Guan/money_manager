@@ -1,0 +1,9 @@
+namespace main_GUI
+{
+    [default_interface]
+    runtimeclass AddEventPage : Windows.UI.Xaml.Controls.Page
+    {
+        AddEventPage();
+        Int32 MyProperty;
+    }
+}

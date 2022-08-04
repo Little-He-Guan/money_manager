@@ -3,26 +3,35 @@
 #include "system.h"
 #include "command_interpreter.h"
 
+#ifdef _WIN32
+#include <Windows.h> // for UWP's sake
+#endif // _WIN32
+
+
 /*
 * All the core data the program uses
 */
 class money_manager final
 {
 public:
-	money_manager() : sys(), io() {}
+	money_manager() : sys() {}
 	~money_manager() = default;
 
 	/*
 	* Tries to load the program (mainly the system) from the save files
+	* @param path the path to the save file, optional. If empty, default file path is applied
+	* @param hFile for UWP app to use filestreams
 	* @returns true iff successfully loaded
 	* @throws std::runtime_error if unexpected error occurs
 	*/
-	bool load_from_file();
+	bool load_from_file(std::string path = "", HANDLE hFile = (HANDLE)-1);
 
 	/*
 	* Saves the current system to the save files
+	* @param hFile for UWP app to use filestreams
+	* @param path the path to the save file, optional. If empty, default file path is applied
 	*/
-	void save_back_to_file();
+	void save_back_to_file(std::string path = "", HANDLE hFile = (HANDLE)-1);
 
 public:
 	/*
@@ -41,15 +50,12 @@ public:
 	void shut_down();
 
 public:
-	void handle_command();
 
 	// @returns the current date in reality, or zero_date if an unexpected error occurs
 	static date get_current_date();
 
-
 public:
 	financial_system sys;
-	command_interpreter io;
 
 	double default_expectation = 0.0;
 	unsigned default_simulation_duration = 730;

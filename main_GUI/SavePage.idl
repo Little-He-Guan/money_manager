@@ -1,0 +1,9 @@
+namespace main_GUI
+{
+    [default_interface]
+    runtimeclass SavePage : Windows.UI.Xaml.Controls.Page
+    {
+        SavePage();
+        Int32 MyProperty;
+    }
+}

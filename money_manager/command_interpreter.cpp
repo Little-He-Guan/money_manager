@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "command_interpreter.h"
 
 #include <sstream>

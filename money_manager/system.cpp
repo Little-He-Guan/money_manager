@@ -1,8 +1,15 @@
+#include "pch.h"
+
 #include "system.h"
 
-#include <fstream>
+#ifdef _WIN32
+#include <io.h>
+#include < fcntl.h >
+#endif // _WIN32
 
 const std::filesystem::path log_file_path(log_file_name);
+
+HANDLE financial_system::hLog = (HANDLE)-1;
 
 void financial_system::add_accidental_income(double value, const std::string& name)
 {
@@ -184,8 +191,29 @@ std::string financial_system::to_string_short() const
 
 void financial_system::record_event(event_type type, const void* p_event, double amount)
 {
-	// each write should start at the end
-	std::ofstream lf(log_file_path, std::ios::out | std::ios::app | std::ios::ate);
+	std::ofstream lf;
+	
+	if (hLog == (HANDLE)-1)
+	{
+		// each write should start at the end
+		lf.open(log_file_path, std::ios::out | std::ios::app | std::ios::ate);
+	}
+	else
+	{
+		int file_descriptor = _open_osfhandle((intptr_t)hLog, _O_TEXT);
+
+		if (file_descriptor != -1)
+		{
+			FILE* file = _fdopen(file_descriptor, "a");
+
+			if (file != NULL)
+			{
+				lf = std::ofstream(file);
+				lf.setf(std::ios::out | std::ios::app | std::ios::ate);
+			}
+		}
+
+	}
 
 	if (!lf.is_open())
 	{

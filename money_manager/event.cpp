@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "event.h"
 
 std::string financial_event::to_string() const
@@ -10,7 +12,12 @@ std::string financial_event::to_string() const
 
 void financial_event::calculate_end()
 {
-	end = start;
+	end =  financial_event::calculate_end(start, type);
+}
+
+date financial_event::calculate_end(date start, effective_duration type)
+{
+	date end = start;
 	switch (type)
 	{
 	case daily:
@@ -53,6 +60,8 @@ void financial_event::calculate_end()
 		end.advance(0, 0, 1);
 		break;
 	}
+
+	return end;
 }
 
 bool periodic_event::update(date d)

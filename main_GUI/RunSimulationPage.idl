@@ -1,0 +1,9 @@
+namespace main_GUI
+{
+    [default_interface]
+    runtimeclass RunSimulationPage : Windows.UI.Xaml.Controls.Page
+    {
+        RunSimulationPage();
+        Int32 MyProperty;
+    }
+}

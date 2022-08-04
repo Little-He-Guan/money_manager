@@ -1,0 +1,9 @@
+namespace main_GUI
+{
+    [default_interface]
+    runtimeclass FindEventPage : Windows.UI.Xaml.Controls.Page
+    {
+        FindEventPage();
+        Int32 MyProperty;
+    }
+}

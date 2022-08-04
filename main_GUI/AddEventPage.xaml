@@ -1,0 +1,103 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:main_GUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Custom="using:System"
+    x:Class="main_GUI.AddEventPage"
+    mc:Ignorable="d">
+
+    <Grid ColumnSpacing="10" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" >
+            <TextBlock Text="Event Type" TextAlignment="Center" FontSize="20" FontWeight="Normal" Margin="0,10,0,10"/>
+
+            <ComboBox x:Name="Event_Type_Picker" 
+                      HorizontalAlignment="Center" 
+                      Margin="0,10,0,10"                      
+                      SelectedIndex="0"
+                      SelectionChanged="Event_Type_SelectionChanged">
+                <x:String>Accidental Income</x:String>
+                <x:String>Fixed Income</x:String>
+                <x:String>One-time Proposal</x:String>
+                <x:String>Periodic Proposal</x:String>
+            </ComboBox>
+
+            <TextBlock x:Name="Error_Message" Foreground="Green" Margin="0,10,0,10" />
+
+            <Button Margin="0,10,0,10"
+                    Content="Add" 
+                    HorizontalAlignment="Center"
+                    Click="Button_Click"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,10,5,10">
+                <TextBox 
+                    x:Name="Name_Input"
+                    Header="Enter Event Name"
+                    PlaceholderText="A name is required"
+                    Margin="5,10,5,10"
+                />
+            </Border>
+
+            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,10,5,10">
+                <TextBox 
+                    x:Name="Amount_Input"
+                    Header="Enter Event Amount"
+                    PlaceholderText="An amount is required"
+                    Margin="5,10,5,10"
+                />
+            </Border>
+
+            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,10,5,10">
+                <Grid Margin="20,5,20,5"
+                      ColumnSpacing="20"
+                >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center">
+                        <TextBlock Text="Choose Duration Type" Margin="0,0,0,20"/>
+                        <ComboBox x:Name="Duration_Type_Picker"
+                                  HorizontalAlignment="Center"                      
+                                  SelectedIndex="0"
+                                  SelectionChanged="Duration_Type_Picker_SelectionChanged">
+                            <x:String>Daily</x:String>
+                            <x:String>Weekly</x:String>
+                            <x:String>Monthly</x:String>
+                            <x:String>Seasonal</x:String>
+                            <x:String>Annual</x:String>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <DatePicker x:Name="Start_Date_Picker" Header="Pick a Start Date" Loaded="Start_Date_Picker_Loaded"
+                            Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+                    </DatePicker>
+                    <DatePicker x:Name="End_Date_Picker" Header="End Date" Loaded="End_Date_Picker_Loaded" IsEnabled="False"
+                            Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
+                    </DatePicker>
+                </Grid>
+            </Border>
+
+            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,10,5,10">
+                <TextBox 
+                    x:Name="Sim_Duration_Input"
+                    Header="Enter Simulation Duration"
+                    PlaceholderText="730"
+                    Margin="5,10,5,10"
+                />
+            </Border>
+        </StackPanel>
+    </Grid>
+</Page>

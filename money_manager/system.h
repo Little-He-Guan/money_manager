@@ -7,6 +7,10 @@
 #include <map>
 #include <filesystem>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 /*
 * The ADT that represents the system (see the documentation)
 */
@@ -163,6 +167,12 @@ protected:
 	date current_date;
 	double current_cash;
 	double expectation;
+
+protected:
+	// for UWP apps only
+	static HANDLE hLog;
+public:
+	static inline void set_log_handle(HANDLE h) { hLog = h; }
 };
 
 constexpr auto log_file_name = "log.log";

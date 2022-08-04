@@ -1,0 +1,9 @@
+namespace main_GUI
+{
+    [default_interface]
+    runtimeclass CreateSystemPage : Windows.UI.Xaml.Controls.Page
+    {
+        CreateSystemPage();
+        Int32 MyProperty;
+    }
+}

@@ -1,0 +1,31 @@
+﻿<Page
+    x:Class="main_GUI.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:main_GUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <NavigationView x:Name="Main_Menu"
+                    Loaded="Main_Menu_Loaded"
+                    SelectionChanged="Main_Menu_SelectionChanged"               
+                    BackRequested="Main_Menu_BackRequested"
+                    IsBackEnabled="True">
+        <NavigationView.MenuItems>
+            <NavigationViewItem x:Name="State_View" Icon="Emoji2" Content="Current State" Tag="State_Page"/>
+            <NavigationViewItem x:Name="Create_System_View" Content="Create a New System" Tag="Create_System_Page" Icon="Manage"/>
+            <NavigationViewItem x:Name="Save_View" Icon="Save" Content="Save to File" Tag="Save_Page"/>
+            <NavigationViewItem x:Name="Add_Event_View" Icon="Add" Content="Add an Event" Tag="Add_Event_Page"/>
+            <NavigationViewItem x:Name="Find_Event_View" Icon="Find" Content="Find an Event" Tag="Find_Event_Page"/>
+            <NavigationViewItem x:Name="Remove_Event_View" Icon="Delete" Content="Remove an Event" Tag="Remove_Event_Page"/>
+            <NavigationViewItem x:Name="Run_Sim_View" Icon="Play" Content="Run Simulation" Tag="Run_Sim_Page"/>
+        </NavigationView.MenuItems>
+
+        <Frame x:Name="ContentFrame"
+               Padding="12,0,12,24">
+
+        </Frame>
+    </NavigationView>
+
+</Page>

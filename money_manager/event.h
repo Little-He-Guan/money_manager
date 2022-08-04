@@ -79,6 +79,9 @@ public:
 protected:
 	// calculates end according to start and type
 	void calculate_end();
+public:
+	// calculates end according to start and type
+	static date calculate_end(date start, effective_duration type);
 
 public:
 	const std::string* name = nullptr;

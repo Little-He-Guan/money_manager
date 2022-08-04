@@ -1,0 +1,9 @@
+namespace main_GUI
+{
+    [default_interface]
+    runtimeclass StatePage : Windows.UI.Xaml.Controls.Page
+    {
+        StatePage();
+        Int32 MyProperty;
+    }
+}
