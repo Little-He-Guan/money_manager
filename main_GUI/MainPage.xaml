@@ -13,13 +13,14 @@
                     BackRequested="Main_Menu_BackRequested"
                     IsBackEnabled="True">
         <NavigationView.MenuItems>
-            <NavigationViewItem x:Name="State_View" Icon="Emoji2" Content="Current State" Tag="State_Page"/>
-            <NavigationViewItem x:Name="Create_System_View" Content="Create a New System" Tag="Create_System_Page" Icon="Manage"/>
-            <NavigationViewItem x:Name="Save_View" Icon="Save" Content="Save to File" Tag="Save_Page"/>
-            <NavigationViewItem x:Name="Add_Event_View" Icon="Add" Content="Add an Event" Tag="Add_Event_Page"/>
-            <NavigationViewItem x:Name="Find_Event_View" Icon="Find" Content="Find an Event" Tag="Find_Event_Page"/>
-            <NavigationViewItem x:Name="Remove_Event_View" Icon="Delete" Content="Remove an Event" Tag="Remove_Event_Page"/>
-            <NavigationViewItem x:Name="Run_Sim_View" Icon="Play" Content="Run Simulation" Tag="Run_Sim_Page"/>
+            <NavigationViewItem Icon="Emoji2" Content="Current State" Tag="State_Page"/>
+            <NavigationViewItem Icon="Manage" Content="Create a New System" Tag="Create_System_Page" />
+            <NavigationViewItem Icon="Save" Content="Save to File" Tag="Save_Page"/>
+            <NavigationViewItem Icon="Add" Content="Add an Event" Tag="Add_Event_Page"/>
+            <NavigationViewItem Icon="Find" Content="Find an Event" Tag="Find_Event_Page"/>
+            <NavigationViewItem Icon="Delete" Content="Remove an Event" Tag="Remove_Event_Page"/>
+            <NavigationViewItem Icon="Play" Content="Run Simulation" Tag="Run_Sim_Page"/>
+            <NavigationViewItem Icon="Library" Content="Check Log" Tag="Log_Page"/>
         </NavigationView.MenuItems>
 
         <Frame x:Name="ContentFrame"

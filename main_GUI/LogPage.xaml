@@ -1,0 +1,50 @@
+﻿<Page
+    x:Class="main_GUI.LogPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:main_GUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Log Since Program Last Exited" HorizontalAlignment="Center" Margin="0,15,0,5" FontFamily="Freestyle Script" FontSize="20" Foreground="DarkOrange" Grid.Row="0"/>
+
+        <ListView x:Name="Log_View"
+                  CanBeScrollAnchor="True"
+                  Grid.Row="1">
+
+            <!-- The ItemsStackPanel must be edited to update the following two properties -->
+            <!-- These properties allow the list to grow from the bottom -->
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:LogView">
+                    <StackPanel MinHeight="75" Width="400" HorizontalAlignment="Center" Background="Blue" Margin="0,10,0,10">
+                        <TextBlock Text="{x:Bind Name}" Margin="5, 10, 5, 0" FontSize="20" Foreground="NavajoWhite"/>
+                        <TextBlock Text="{x:Bind Date}" Margin="5, 0, 5, 10" FontSize="15" Foreground="NavajoWhite"/>
+                        <TextBlock Text="{x:Bind Amount}" Margin="5, 0, 5, 10" FontSize="30" Foreground="White"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+            <!-- This setter property is created so ListViewItems correctly align to the left or right. -->
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+    
+</Page>

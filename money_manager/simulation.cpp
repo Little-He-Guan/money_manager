@@ -2,6 +2,20 @@
 
 #include "simulation.h"
 
+simulation& simulation::operator=(const simulation& right)
+{
+	financial_system::operator=(right);
+
+	end_date = right.end_date;
+	aborted_date = right.aborted_date;
+	aborted_cash = right.aborted_cash;
+	sim_avg_amount = right.sim_avg_amount;
+	completed = right.completed;
+	aborted = right.aborted;
+
+	return *this;
+}
+
 void simulation::start_simulation()
 {
 	double initial_cash = current_cash;

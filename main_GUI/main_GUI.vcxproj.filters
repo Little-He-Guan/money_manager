@@ -29,10 +29,19 @@
     <Page Include="CreateSystemPage.xaml">
       <Filter>Pages</Filter>
     </Page>
+    <Page Include="LogPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
     <Midl Include="MainPage.idl" />
+    <Midl Include="LogView.idl">
+      <Filter>Resources</Filter>
+    </Midl>
+    <Midl Include="SimulationViewItem.idl">
+      <Filter>Resources</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -222,6 +231,9 @@
     </Filter>
     <Filter Include="InternalSys">
       <UniqueIdentifier>{be9d74f7-bc50-4846-a294-a5844a813545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{c490c7b6-095d-4fb9-84ee-59c8b26995bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

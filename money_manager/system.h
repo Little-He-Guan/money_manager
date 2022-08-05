@@ -42,6 +42,8 @@ public:
 
 	virtual ~financial_system() = default;
 
+	financial_system& operator=(const financial_system& right);
+
 public:
 	// constructs an one-time proposal in-place with the name and the args
 	// @returns true iff the proposal is successfully added (i.e. if the name is not occupied)
@@ -168,11 +170,8 @@ protected:
 	double current_cash;
 	double expectation;
 
-protected:
-	// for UWP apps only
-	static HANDLE hLog;
 public:
-	static inline void set_log_handle(HANDLE h) { hLog = h; }
+	static void (*record_handler_UWP)(event_type , const void* , double);
 };
 
 constexpr auto log_file_name = "log.log";

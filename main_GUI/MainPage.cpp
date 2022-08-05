@@ -2,19 +2,11 @@
 #include "MainPage.h"
 #include "MainPage.g.cpp"
 
-#include <Windows.h>
-#include <winrt/Windows.ApplicationModel.h>
-#include <winrt/Windows.Storage.h>
-
-// the following header cannot be used by UWP apps (but ... why do I have to use it then?)
-enum _SHGDNF { SHGDN_NORMAL = 0, SHGDN_INFOLDER = 0x1, SHGDN_FOREDITING = 0x1000, SHGDN_FORADDRESSBAR = 0x4000, SHGDN_FORPARSING = 0x8000 }; typedef DWORD SHGDNF;
-#include <WindowsStorageCom.h> // to convert the storagefile to a handle
-
 #include "date_convertion.h"
 #include "internal_sys.h"
 
-using namespace winrt;
-using namespace Windows::UI::Xaml;
+#include <winrt/Windows.ApplicationModel.h>
+#include <winrt/Windows.Storage.h>
 
 namespace winrt::main_GUI::implementation
 {
@@ -34,15 +26,9 @@ namespace winrt::main_GUI::implementation
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Find_Event_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::FindEventPage>()));
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Remove_Event_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::RemoveEventPage>()));
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Run_Sim_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::RunSimulationPage>()));
+        m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Log_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::LogPage>()));
     }
 
-    MainPage::~MainPage()
-    {
-        Save_System();
-
-        CloseHandle(hSave);
-        CloseHandle(hLog);
-    }
 
     int32_t MainPage::MyProperty()
     {
@@ -53,9 +39,6 @@ namespace winrt::main_GUI::implementation
     {
         throw hresult_not_implemented();
     }
-
-
-    HANDLE MainPage::hSave, MainPage::hLog;
 }
 
 
@@ -63,10 +46,8 @@ namespace wuxc = winrt::Windows::UI::Xaml::Controls;
 
 void winrt::main_GUI::implementation::MainPage::Main_Menu_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    get_file_handles();
-
-    // initialize the system with custom file path (required by UWP)
-    bool load_successful = g_mgr.load_from_file("", hSave);
+    // initialize the system
+    bool load_successful = ::load_system_from_file_UWP();
     // update the system state.
     if (load_successful)
     {
@@ -150,7 +131,6 @@ void winrt::main_GUI::implementation::MainPage::On_Navigated(Windows::Foundation
                         }
                     }
                 }
-                break;
             }
         }
     }
@@ -201,76 +181,3 @@ bool winrt::main_GUI::implementation::MainPage::TryGoBack()
     ContentFrame().GoBack();
     return true;
 }
-
-void winrt::main_GUI::implementation::MainPage::Save_System()
-{
-    CloseHandle(hSave);
-
-    // override the file
-    Windows::Storage::StorageFile sav_file = Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(L"save.sav", Windows::Storage::CreationCollisionOption::ReplaceExisting).get();
-
-    // try to get an IStorageItemHandleAccess interface from the StorageFile 
-    auto sav_fileAccessor = sav_file.as<IStorageItemHandleAccess>();
-
-    HRESULT hr;
-    if (FAILED(hr = sav_fileAccessor->Create(HANDLE_ACCESS_OPTIONS::HAO_READ | HAO_WRITE,
-        HANDLE_SHARING_OPTIONS::HSO_SHARE_NONE,
-        HANDLE_OPTIONS::HO_NONE,
-        nullptr,
-        &hSave)))
-    {
-        throw_hresult(hr);
-    }
-
-    g_mgr.save_back_to_file("", hSave);
-}
-
-void winrt::main_GUI::implementation::MainPage::get_file_handles()
-{
-    // create the files if the do not exist (we cannot do this in UWP with fstream)
-    Windows::Storage::StorageFile sav_file = Windows::Storage::ApplicationData::Current().LocalFolder().TryGetItemAsync(L"save.sav").get().try_as<Windows::Storage::StorageFile>();
-    if (sav_file != nullptr) // exists. do nothing
-    {
-    }
-    else // create the file
-    {
-        sav_file = Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(L"save.sav").get();
-    }
-
-    Windows::Storage::StorageFile log_file = Windows::Storage::ApplicationData::Current().LocalFolder().TryGetItemAsync(L"log.log").get().try_as<Windows::Storage::StorageFile>();
-    if (log_file != nullptr) // exists. do nothing
-    {
-    }
-    else // create the file
-    {
-        log_file = Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(L"log.log").get();
-    }
-
-    // try to get an IStorageItemHandleAccess interface from the StorageFile 
-    auto sav_fileAccessor = sav_file.as<IStorageItemHandleAccess>();
-
-    HRESULT hr;
-    if (FAILED(hr = sav_fileAccessor->Create(HANDLE_ACCESS_OPTIONS::HAO_READ | HAO_WRITE, // write access is required
-        HANDLE_SHARING_OPTIONS::HSO_SHARE_NONE,
-        HANDLE_OPTIONS::HO_NONE,
-        nullptr,
-        &hSave)))
-    {
-        throw_hresult(hr);
-    }
-
-    // try to get an IStorageItemHandleAccess interface from the StorageFile 
-    auto log_fileAccessor = log_file.as<IStorageItemHandleAccess>();
-
-    if (FAILED(hr = log_fileAccessor->Create(HANDLE_ACCESS_OPTIONS::HAO_READ | HAO_WRITE, // write access is required
-        HANDLE_SHARING_OPTIONS::HSO_SHARE_NONE,
-        HANDLE_OPTIONS::HO_NONE,
-        nullptr,
-        &hLog)))
-    {
-        throw_hresult(hr);
-    }
-
-    financial_system::set_log_handle(hLog);
-}
-

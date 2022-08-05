@@ -1,0 +1,32 @@
+﻿<Page
+    x:Class="main_GUI.SimulationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:main_GUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Orientation="Vertical">
+        <TextBox x:Name="Dur_Txt_Input" 
+                 Header="Simulation Duration (In days):" 
+                 Width="400" 
+                 HorizontalAlignment="Center" 
+                 Margin="0,20,0,5" Text="{Binding Value, ElementName=Dur_Slider_Input, Mode=TwoWay}"/>
+        <Slider x:Name="Dur_Slider_Input" 
+                Width="400" 
+                Minimum="365" Maximum="1826" 
+                AutomationProperties.Name="Slider with ticks" 
+                TickFrequency="30" TickPlacement="Outside" />
+        <Button Click="Run_Sim" Content="Run Simulation" HorizontalAlignment="Center" Margin="0,20,0,20"/>
+
+        <ListView>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+        
+    </StackPanel>
+</Page>

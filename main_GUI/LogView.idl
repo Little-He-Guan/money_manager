@@ -1,0 +1,14 @@
+namespace main_GUI
+{
+    [bindable]
+    [default_interface]
+    runtimeclass LogView 
+    {
+        LogView();
+        LogView(String log_line);
+
+        String Name;
+        String Date;
+        String Amount;
+    }
+}

@@ -3,10 +3,11 @@
 #include "system.h"
 #include "command_interpreter.h"
 
+#include <fstream>
+
 #ifdef _WIN32
 #include <Windows.h> // for UWP's sake
 #endif // _WIN32
-
 
 /*
 * All the core data the program uses
@@ -20,18 +21,16 @@ public:
 	/*
 	* Tries to load the program (mainly the system) from the save files
 	* @param path the path to the save file, optional. If empty, default file path is applied
-	* @param hFile for UWP app to use filestreams
 	* @returns true iff successfully loaded
 	* @throws std::runtime_error if unexpected error occurs
 	*/
-	bool load_from_file(std::string path = "", HANDLE hFile = (HANDLE)-1);
+	bool load_from_file(std::string path = "");
 
 	/*
 	* Saves the current system to the save files
-	* @param hFile for UWP app to use filestreams
 	* @param path the path to the save file, optional. If empty, default file path is applied
 	*/
-	void save_back_to_file(std::string path = "", HANDLE hFile = (HANDLE)-1);
+	void save_back_to_file(std::string path = "");
 
 public:
 	/*
@@ -65,6 +64,9 @@ public:
 
 public:
 	static constexpr auto version_str = "1.1";
+
+private:
+
 };
 
 // non-negative integer

@@ -4,7 +4,6 @@
 #include "SavePage.g.cpp"
 #endif
 
-#include "MainPage.h"
 #include "internal_sys.h"
 
 using namespace winrt;
@@ -29,7 +28,7 @@ namespace winrt::main_GUI::implementation
 
     void SavePage::ClickHandler(IInspectable const&, RoutedEventArgs const&)
     {
-        winrt::main_GUI::implementation::MainPage::Save_System();
+        ::save_system_back_to_file_UWP();
 
         Msg_Text().Text(L"Save Successful!");
     }

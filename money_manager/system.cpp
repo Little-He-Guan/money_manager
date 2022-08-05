@@ -9,7 +9,20 @@
 
 const std::filesystem::path log_file_path(log_file_name);
 
-HANDLE financial_system::hLog = (HANDLE)-1;
+void (*financial_system::record_handler_UWP)(financial_system::event_type, const void*, double) = nullptr;
+
+financial_system& financial_system::operator=(const financial_system& right)
+{
+	ot_proposals = right.ot_proposals;
+	p_proposals = right.p_proposals;
+	incomes = right.incomes;
+
+	current_date = right.current_date;
+	current_cash = right.current_cash;
+	expectation = right.expectation;
+
+	return *this;
+}
 
 void financial_system::add_accidental_income(double value, const std::string& name)
 {
@@ -191,68 +204,53 @@ std::string financial_system::to_string_short() const
 
 void financial_system::record_event(event_type type, const void* p_event, double amount)
 {
-	std::ofstream lf;
-	
-	if (hLog == (HANDLE)-1)
+	if (record_handler_UWP != nullptr)
 	{
-		// each write should start at the end
-		lf.open(log_file_path, std::ios::out | std::ios::app | std::ios::ate);
+		record_handler_UWP(type, p_event, amount);
 	}
 	else
 	{
-		int file_descriptor = _open_osfhandle((intptr_t)hLog, _O_TEXT);
+		std::ofstream lf(log_file_path, std::ios::out | std::ios::app | std::ios::ate);
 
-		if (file_descriptor != -1)
+		if (!lf.is_open())
 		{
-			FILE* file = _fdopen(file_descriptor, "a");
+			throw std::runtime_error("Unexpected error: cannot open log file");
+		}
 
-			if (file != NULL)
+		std::string type_str;
+		switch (type)
+		{
+		case financial_system::event_type::accidental_income:
+			type_str = "Accidental income ";
+			break;
+		case financial_system::event_type::fixed_income:
+			type_str = "Fixed income ";
+			break;
+		case financial_system::event_type::periodic_proposal:
+			type_str = "Periodic proposal ";
+			break;
+		case financial_system::event_type::one_time_proposal:
+			type_str = "One-time proposal ";
+			break;
+		}
+
+		if (type == financial_system::event_type::accidental_income)
+		{
+			lf << type_str << *reinterpret_cast<const std::string*>(p_event) << " at " << current_date.to_string() << " +" << amount << std::endl;
+		}
+		else
+		{
+			const auto& e = *reinterpret_cast<const financial_event*>(p_event);
+			if (type == financial_system::event_type::fixed_income) // for incomes it's +
 			{
-				lf = std::ofstream(file);
-				lf.setf(std::ios::out | std::ios::app | std::ios::ate);
+				lf << type_str << *e.name << " at " << current_date.to_string() << " +" << amount << std::endl;
+			}
+			else // for proposals it's -
+			{
+				lf << type_str << *e.name << " at " << current_date.to_string() << " -" << amount << std::endl;
 			}
 		}
 
+		lf.close();
 	}
-
-	if (!lf.is_open())
-	{
-		throw std::runtime_error("Unexpected error: cannot open log file");
-	}
-
-	std::string type_str;
-	switch (type)
-	{
-	case financial_system::event_type::accidental_income:
-		type_str = "Accidental income ";
-		break;
-	case financial_system::event_type::fixed_income:
-		type_str = "Fixed income ";
-		break;
-	case financial_system::event_type::periodic_proposal:
-		type_str = "Periodic proposal ";
-		break;
-	case financial_system::event_type::one_time_proposal:
-		type_str = "One-time proposal ";
-		break;
-	}
-
-	if (type == financial_system::event_type::accidental_income)
-	{
-		lf << type_str << *reinterpret_cast<const std::string*>(p_event) << " at " << current_date.to_string() << " +" << amount << std::endl;
-	}
-	else
-	{		
-		const auto& e = *reinterpret_cast<const financial_event*>(p_event);
-		if (type == financial_system::event_type::fixed_income) // for incomes it's +
-		{
-			lf << type_str << *e.name << " at " << current_date.to_string() << " +" << amount << std::endl;
-		}
-		else // for proposals it's -
-		{
-			lf << type_str << *e.name << " at " << current_date.to_string() << " -" << amount << std::endl;
-		}
-	}
-
-	lf.close();
 }

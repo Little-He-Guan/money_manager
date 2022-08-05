@@ -3,7 +3,7 @@
 #include "money_manager.h"
 
 #include <time.h>
-#include <fstream>
+
 #include <filesystem>
 
 #include <stdexcept>
@@ -26,39 +26,19 @@ const std::regex sf_event_line_regex_obj(sf_event_line_regex);
 
 const std::regex integer_regex_obj(integer_regex);
 
-bool money_manager::load_from_file(std::string path, HANDLE hFile)
+bool money_manager::load_from_file(std::string path)
 {
 	if (!system_loaded)
 	{
 		fs::path save_path(path.empty() ? save_file_name : path);
 
-		std::ifstream sf;
-
-		if ((HANDLE)-1 == hFile)
+		// create the file if does not exist
+		if (!fs::exists(save_path))
 		{
-			if (!fs::exists(save_path)) // the file does not exist now.
-			{
-				// create the file
-				std::ofstream(save_path, std::ios::out);
-			}
-
-			sf.open(save_path, std::ios::in);
+			std::ofstream(save_path);
 		}
-		else
-		{
-			int file_descriptor = _open_osfhandle((intptr_t)hFile, _O_RDONLY | _O_TEXT);
 
-			if (file_descriptor != -1)
-			{
-				FILE* file = _fdopen(file_descriptor, "r");
-
-				if (file != NULL)
-				{
-					sf = std::ifstream(file);
-					sf.setf(std::ios::in);
-				}
-			}
-		}
+		std::ifstream sf(save_path, std::ios::in);
 		
 		if (!sf.is_open())
 		{
@@ -240,6 +220,7 @@ bool money_manager::load_from_file(std::string path, HANDLE hFile)
 				}
 
 				sf.close();
+
 				return true;
 			}
 		}
@@ -252,35 +233,14 @@ bool money_manager::load_from_file(std::string path, HANDLE hFile)
 	return false;
 }
 
-void money_manager::save_back_to_file(std::string path, HANDLE hFile)
+void money_manager::save_back_to_file(std::string path)
 {
 	fs::path save_path(path.empty() ? save_file_name : path);
 
 	if (system_loaded) // do not write the default constructed system to file
 	{
-		std::ofstream sf;
-
-		if ((HANDLE)-1 == hFile)
-		{
-			// overwrite the file
-			sf.open(save_path, std::ios::out | std::ios::trunc);
-		}
-		else
-		{
-			int file_descriptor = _open_osfhandle((intptr_t)hFile, _O_TEXT);
-
-			if (file_descriptor != -1)
-			{
-				// overwrite the file
-				FILE* file = _fdopen(file_descriptor, "a");
-
-				if (file != NULL)
-				{
-					sf = std::ofstream(file);
-					sf.setf(std::ios::out | std::ios::trunc);
-				}
-			}
-		}
+		// overwrite the file
+		std::ofstream sf(save_path, std::ios::out | std::ios::trunc);
 
 		sf << sys.get_date().to_string() << std::endl;
 		sf << sys.get_cash() << " " << sys.get_expectation() << std::endl;
@@ -303,7 +263,7 @@ void money_manager::save_back_to_file(std::string path, HANDLE hFile)
 			sf << *e.name << " " << e.start.to_string() << " " << e.end.to_string() << " " << std::to_string(e.amount) << " " << std::to_string(e.actual) << " " << (int)e.type << std::endl;
 		}
 
-		sf.close();	
+		sf.close();
 	}
 }
 

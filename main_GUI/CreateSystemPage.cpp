@@ -27,8 +27,6 @@ namespace winrt::main_GUI::implementation
     {
         throw hresult_not_implemented();
     }
-
-    const std::wregex CreateSystemPage::double_regex_obj(CreateSystemPage::double_regex);
 }
 
 
@@ -36,7 +34,7 @@ void winrt::main_GUI::implementation::CreateSystemPage::Button_Click(winrt::Wind
 {
     auto cash_str = Cash_Input().Text(), exp_str = Expectation_Input().Text();
 
-    if (std::regex_match(std::wstring(cash_str), double_regex_obj) && std::regex_match(std::wstring(exp_str), double_regex_obj)) // correct input
+    if (std::regex_match(std::wstring(cash_str), ::double_wregex_obj) && std::regex_match(std::wstring(exp_str), ::double_wregex_obj)) // correct input
     {
         double cash = std::stof(std::wstring(cash_str)), exp = std::stof(std::wstring(exp_str));
         if (cash >= exp && exp >= 0)

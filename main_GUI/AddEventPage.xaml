@@ -6,15 +6,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Custom="using:System"
     x:Class="main_GUI.AddEventPage"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
-    <Grid ColumnSpacing="10" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" >
+        <StackPanel Grid.Column="0" Grid.Row="0" >
             <TextBlock Text="Event Type" TextAlignment="Center" FontSize="20" FontWeight="Normal" Margin="0,10,0,10"/>
 
             <ComboBox x:Name="Event_Type_Picker" 
@@ -28,24 +33,25 @@
                 <x:String>Periodic Proposal</x:String>
             </ComboBox>
 
-            <TextBlock x:Name="Error_Message" Foreground="Green" Margin="0,10,0,10" />
+            <TextBlock x:Name="Error_Message" Foreground="Green" Margin="0,10,0,10" TextWrapping="Wrap" />
 
             <Button Margin="0,10,0,10"
                     Content="Add" 
                     HorizontalAlignment="Center"
                     Click="Button_Click"/>
         </StackPanel>
-        <StackPanel Grid.Column="1">
-            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,10,5,10">
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,10">
+            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
                 <TextBox 
                     x:Name="Name_Input"
                     Header="Enter Event Name"
                     PlaceholderText="A name is required"
+                    TextChanged="Name_Input_TextChanged"
                     Margin="5,10,5,10"
                 />
             </Border>
 
-            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,10,5,10">
+            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
                 <TextBox 
                     x:Name="Amount_Input"
                     Header="Enter Event Amount"
@@ -54,10 +60,8 @@
                 />
             </Border>
 
-            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,10,5,10">
-                <Grid Margin="20,5,20,5"
-                      ColumnSpacing="20"
-                >
+            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
+                <Grid Margin="20,5,20,5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
@@ -82,22 +86,60 @@
                     </StackPanel>
 
                     <DatePicker x:Name="Start_Date_Picker" Header="Pick a Start Date" Loaded="Start_Date_Picker_Loaded"
-                            Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+                                Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch"
+                                Margin="10,0,0,0">
                     </DatePicker>
                     <DatePicker x:Name="End_Date_Picker" Header="End Date" Loaded="End_Date_Picker_Loaded" IsEnabled="False"
-                            Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
+                                Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"
+                                Margin="10,0,0,0">
                     </DatePicker>
                 </Grid>
             </Border>
 
-            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,10,5,10">
-                <TextBox 
-                    x:Name="Sim_Duration_Input"
-                    Header="Enter Simulation Duration"
-                    PlaceholderText="730"
-                    Margin="5,10,5,10"
+            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox 
+                     x:Name="Dur_Txt_Input" 
+                     Header="Simulation Duration (In days):" 
+                     Width="400" 
+                     HorizontalAlignment="Center" 
+                     KeyDown="Dur_Txt_Input_KeyDown"
+                     Margin="20,5,0,5" Text="{Binding Value, ElementName=Dur_Slider_Input, Mode=OneWay}"
                 />
+                    <Slider 
+                    x:Name="Dur_Slider_Input" 
+                    Width="400"
+                    Margin="5,5,0,5"
+                    VerticalAlignment="Bottom"
+                    Minimum="365" Maximum="1826" 
+                    AutomationProperties.Name="Slider with ticks" 
+                    TickFrequency="30" TickPlacement="Outside" 
+                />
+                </StackPanel>
             </Border>
+
+            <TextBlock Text="Simulation Result (Only valid after an attempt to add a proposal)" 
+                       HorizontalAlignment="Center"/>
+            <TextBlock x:Name="Proposal_CanContinue_Txt"
+                       Foreground="DarkGoldenrod"
+                       HorizontalAlignment="Center"/>
+
+            <Button x:Name="Continue_Prop_Button"
+                    Content="Continue add proposal"
+                    Click="Button_Click_1"
+                    HorizontalAlignment="Center" Margin="0,5,0,0">
+            </Button>
+
         </StackPanel>
+
+        <CalendarView x:Name="Calendar" 
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Grid.Row="1" Grid.Column="1"
+                      Margin="10,0,10,0"
+                      CalendarViewDayItemChanging="CalendarView_CalendarViewDayItemChanging">
+            <CalendarView.DayItemFontSize>8</CalendarView.DayItemFontSize>
+
+        </CalendarView>
     </Grid>
 </Page>

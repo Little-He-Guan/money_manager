@@ -15,7 +15,7 @@
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0.19041.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformMinVersion>10.0.14393.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ItemGroup Label="ProjectConfigurations">
@@ -127,6 +127,14 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="internal_sys.h" />
+    <ClInclude Include="LogPage.h">
+      <DependentUpon>LogPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="LogView.h">
+      <DependentUpon>LogView.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -150,6 +158,10 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="SimulationViewItem.h">
+      <DependentUpon>SimulationViewItem.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="StatePage.h">
       <DependentUpon>StatePage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -166,6 +178,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="FindEventPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LogPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
@@ -278,6 +293,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="LogPage.cpp">
+      <DependentUpon>LogPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="LogView.cpp">
+      <DependentUpon>LogView.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -304,6 +327,10 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="SimulationViewItem.cpp">
+      <DependentUpon>SimulationViewItem.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="StatePage.cpp">
       <DependentUpon>StatePage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -325,6 +352,13 @@
       <DependentUpon>FindEventPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="LogPage.idl">
+      <DependentUpon>LogPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="LogView.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Midl>
@@ -343,6 +377,9 @@
     <Midl Include="SettingsPage.idl">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="SimulationViewItem.idl">
+      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="StatePage.idl">
       <DependentUpon>StatePage.xaml</DependentUpon>

@@ -16,8 +16,7 @@ namespace winrt::main_GUI::implementation
         void Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
 
     private:
-        static constexpr auto double_regex = L"((?:[\\d]*[.])?[\\d]+)";
-        static const std::wregex double_regex_obj;
+
     };
 }
 

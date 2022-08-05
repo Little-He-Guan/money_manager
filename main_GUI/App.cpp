@@ -3,6 +3,8 @@
 #include "App.h"
 #include "MainPage.h"
 
+#include "internal_sys.h"
+
 using namespace winrt;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Activation;
@@ -94,6 +96,8 @@ void App::OnLaunched(LaunchActivatedEventArgs const& e)
             Window::Current().Activate();
         }
     }
+
+    ::register_event_record_handler_UWP();
 }
 
 /// <summary>

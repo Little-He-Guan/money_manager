@@ -15,6 +15,8 @@ public:
 
 	~simulation() = default;
 
+	simulation& operator=(const simulation& right);
+
 public:
 	void start_simulation();
 

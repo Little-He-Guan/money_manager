@@ -7,7 +7,6 @@ namespace winrt::main_GUI::implementation
     struct MainPage : MainPageT<MainPage>
     {
         MainPage();
-        ~MainPage();
 
         int32_t MyProperty();
         void MyProperty(int32_t value);
@@ -28,19 +27,9 @@ namespace winrt::main_GUI::implementation
         */
         bool TryGoBack();
 
-        inline static HANDLE Get_Save_File() { return hSave; }
-        inline static HANDLE Get_Log_File() { return hLog; }
-
-        static void Save_System();
-
     private:
         // The pages corresponding to each navigation item
         std::vector<std::pair<std::wstring, Windows::UI::Xaml::Interop::TypeName>> m_pages;
-
-        static HANDLE hSave, hLog;
-
-    private:
-        static void get_file_handles();
     };
 }
 
