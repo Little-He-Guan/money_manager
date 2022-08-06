@@ -111,7 +111,7 @@
                     Width="400"
                     Margin="5,5,0,5"
                     VerticalAlignment="Bottom"
-                    Minimum="365" Maximum="1826" 
+                    Minimum="30" Maximum="1826" 
                     AutomationProperties.Name="Slider with ticks" 
                     TickFrequency="30" TickPlacement="Outside" 
                 />

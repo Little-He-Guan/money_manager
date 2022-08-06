@@ -55,3 +55,12 @@ void winrt::main_GUI::implementation::CreateSystemPage::Button_Click(winrt::Wind
         Error_Message().Text(L"Invalid input!");
     }
 }
+
+
+void winrt::main_GUI::implementation::CreateSystemPage::Error_Message_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
+{
+    if (g_mgr.system_loaded)
+    {
+        SET_ERROR_MESSAGE(Error_Message(), L"The system is already loaded. If you create a new one, the previous one will be overridden and cannot be recovered!");
+    }
+}

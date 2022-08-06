@@ -14,11 +14,10 @@
                     IsBackEnabled="True">
         <NavigationView.MenuItems>
             <NavigationViewItem Icon="Emoji2" Content="Current State" Tag="State_Page"/>
-            <NavigationViewItem Icon="Manage" Content="Create a New System" Tag="Create_System_Page" />
+            <NavigationViewItem Icon="NewFolder" Content="Create a New System" Tag="Create_System_Page" />
             <NavigationViewItem Icon="Save" Content="Save to File" Tag="Save_Page"/>
             <NavigationViewItem Icon="Add" Content="Add an Event" Tag="Add_Event_Page"/>
-            <NavigationViewItem Icon="Find" Content="Find an Event" Tag="Find_Event_Page"/>
-            <NavigationViewItem Icon="Delete" Content="Remove an Event" Tag="Remove_Event_Page"/>
+            <NavigationViewItem Icon="Manage" Content="Manage Events" Tag="Find_Event_Page"/>
             <NavigationViewItem Icon="Play" Content="Run Simulation" Tag="Run_Sim_Page"/>
             <NavigationViewItem Icon="Library" Content="Check Log" Tag="Log_Page"/>
         </NavigationView.MenuItems>

@@ -14,7 +14,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Log Since Program Last Exited" HorizontalAlignment="Center" Margin="0,15,0,5" FontFamily="Freestyle Script" FontSize="20" Foreground="DarkOrange" Grid.Row="0"/>
+        <TextBlock Text="Log" HorizontalAlignment="Center" Margin="0,15,0,5" FontFamily="Freestyle Script" FontSize="50" Foreground="DarkOrange" Grid.Row="0"/>
 
         <ListView x:Name="Log_View"
                   CanBeScrollAnchor="True"

@@ -15,7 +15,7 @@
             <TextBox x:Name="Expectation_Input" Header="Enter your expectation:" PlaceholderText="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,10,10"/>
         </Border>
 
-        <TextBlock x:Name="Error_Message" Foreground="Red" TextAlignment="Center" />
+        <TextBlock Loaded="Error_Message_Loaded" x:Name="Error_Message" TextWrapping="Wrap" Foreground="Red" TextAlignment="Center" Margin="0,10,0,10"/>
 
         <Button x:Name="Create_Button" 
                 Content="Create" 

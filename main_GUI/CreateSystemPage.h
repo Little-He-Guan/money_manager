@@ -17,6 +17,8 @@ namespace winrt::main_GUI::implementation
 
     private:
 
+    public:
+        void Error_Message_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 

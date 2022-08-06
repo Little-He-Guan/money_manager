@@ -11,9 +11,6 @@
     <Page Include="AddEventPage.xaml">
       <Filter>Pages</Filter>
     </Page>
-    <Page Include="RemoveEventPage.xaml">
-      <Filter>Pages</Filter>
-    </Page>
     <Page Include="FindEventPage.xaml">
       <Filter>Pages</Filter>
     </Page>
@@ -39,7 +36,7 @@
     <Midl Include="LogView.idl">
       <Filter>Resources</Filter>
     </Midl>
-    <Midl Include="SimulationViewItem.idl">
+    <Midl Include="EventView.idl">
       <Filter>Resources</Filter>
     </Midl>
   </ItemGroup>

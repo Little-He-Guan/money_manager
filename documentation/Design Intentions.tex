@@ -109,7 +109,7 @@ Upon any change to the system, the program will attempt a simulation as describe
 \subsubsection{Safe state}
 If, at any day in a simulation, the calculated value of $C$ is below $E$, the program will terminate the simulation and conclude that the system will not be in a safe state after the change is applied. If the change is brought by a new proposal, the proposal will be rejected. If the simulation finished normally without being terminated beforehand, the program concludes that the system will be in a safe state for the user's (expected) lifetime.
 
-\subsection{How a free amount is calculated}
+\subsection{How a free amount is calculated (CLI only)}
 Different from the process of determining if the system will be in a safe state where the calculation aims to be precise, the free amount calculation is done approximately. Therefore, the software will only consider a time of the user's choice in this calculation. The user can select a time between a month and two years (as mentioned before, two years is the smallest duration during which all events can at least complete taking effect once).
 
 In addition, for the sake of speed, there will not be a simulation in which time is advanced day by day. The process is instead in this way (let the time the user chooses be $T$ days):

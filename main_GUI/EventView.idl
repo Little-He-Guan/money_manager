@@ -1,0 +1,15 @@
+namespace main_GUI
+{
+    [bindable]
+    [default_interface]
+    runtimeclass EventView
+    {
+        EventView(String n, String tt, String a, Int32 t);
+
+        String Name;
+        String TimeText;
+        String Amount;
+
+        Int32 Type;
+    }
+}

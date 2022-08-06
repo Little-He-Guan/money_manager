@@ -41,6 +41,7 @@ void winrt::main_GUI::implementation::RunSimulationPage::Button_Click(winrt::Win
     int duration = static_cast<int>(Dur_Slider_Input().Value());
     sim.end_date = sim.get_date() + duration;
 
+    double total = 0.0;
     while (sim.get_date() < sim.end_date)
     {
         sim.advance_one_day();
@@ -50,8 +51,22 @@ void winrt::main_GUI::implementation::RunSimulationPage::Button_Click(winrt::Win
 
         if (!bSafeState)
         {
+            sim.aborted = true;
             break;
         }
+
+        total += sim.get_cash() - sim.get_expectation();
+    }
+
+    if (sim.aborted)
+    {
+        SET_ERROR_MESSAGE(Sim_Res_Txt(), winrt::hstring(L"The system would not be in a safe state at ") + winrt::to_hstring(sim.get_date().to_string()));
+    }
+    else
+    {
+        total /= (double)(sim.get_date() - cur_date);
+        SET_SUCCESS_MESSAGE(Sim_Res_Txt(), 
+            winrt::hstring(L"The simulation does not find any danger. And the money you can use averagely (each day) during the simulation duration is ") + winrt::to_hstring(total));
     }
 
     // update the calendar

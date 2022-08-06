@@ -12,12 +12,13 @@ namespace winrt::main_GUI::implementation
         winrt::event_token PropertyChanged(Windows::UI::Xaml::Data::PropertyChangedEventHandler const& value);
         void PropertyChanged(winrt::event_token const& token);
 
-        winrt::hstring Name();
+        winrt::hstring Name() const;
         void Name(winrt::hstring const& value);
-        winrt::hstring Date();
+        winrt::hstring Date() const;
         void Date(winrt::hstring const& value);
-        winrt::hstring Amount();
+        winrt::hstring Amount() const;
         void Amount(winrt::hstring const& value);
+
     private:
         winrt::hstring name;
         winrt::hstring date;

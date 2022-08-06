@@ -7,6 +7,8 @@
 using namespace winrt;
 using namespace Windows::UI::Xaml;
 
+#include "../money_manager/money_manager.h"
+
 namespace winrt::main_GUI::implementation
 {
     SettingsPage::SettingsPage()
@@ -23,9 +25,29 @@ namespace winrt::main_GUI::implementation
     {
         throw hresult_not_implemented();
     }
+}
 
-    void SettingsPage::ClickHandler(IInspectable const&, RoutedEventArgs const&)
+
+void winrt::main_GUI::implementation::SettingsPage::Dark_Mode_Toggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
+{
+    auto app = wux::Application::Current();
+
+    if (app)
     {
-        Button().Content(box_value(L"Clicked"));
+        if (Dark_Mode_Toggle().IsOn())
+        {
+            app.RequestedTheme(wux::ApplicationTheme::Dark);
+        }
+        else
+        {
+            app.RequestedTheme(wux::ApplicationTheme::Light);
+        }
     }
+
+}
+
+
+void winrt::main_GUI::implementation::SettingsPage::Version_Text_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
+{
+    Version_Text().Text(winrt::hstring(L"Money Manager Version ") + winrt::to_hstring(money_manager::version_str));
 }

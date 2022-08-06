@@ -35,7 +35,7 @@ namespace winrt::main_GUI::implementation
         m_propertyChanged.remove(token);
     }
 
-    winrt::hstring LogView::Name()
+    winrt::hstring LogView::Name() const
     {
         return name;
     }
@@ -49,7 +49,7 @@ namespace winrt::main_GUI::implementation
         }
     }
 
-    winrt::hstring LogView::Date()
+    winrt::hstring LogView::Date() const
     {
         return date;
     }
@@ -63,7 +63,7 @@ namespace winrt::main_GUI::implementation
         }
     }
 
-    winrt::hstring LogView::Amount()
+    winrt::hstring LogView::Amount() const
     {
         return amount;
     }

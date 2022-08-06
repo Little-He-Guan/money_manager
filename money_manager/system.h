@@ -116,6 +116,9 @@ public:
 	const auto& get_p_proposals() const { return p_proposals; }
 	const auto& get_ot_proposals() const { return ot_proposals; }
 	const auto& get_fixed_incomes() const { return incomes; }
+	auto& get_p_proposals() { return p_proposals; }
+	auto& get_ot_proposals(){ return ot_proposals; }
+	auto& get_fixed_incomes() { return incomes; }
 
 	void set_expectation(double new_exp) { expectation = new_exp; }
 	void set_cash(double new_cash) { current_cash = new_cash; }

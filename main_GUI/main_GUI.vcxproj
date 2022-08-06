@@ -15,7 +15,7 @@
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0.19041.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.14393.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ItemGroup Label="ProjectConfigurations">
@@ -122,6 +122,10 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="date_convertion.h" />
+    <ClInclude Include="EventView.h">
+      <DependentUpon>EventView.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="FindEventPage.h">
       <DependentUpon>FindEventPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -142,10 +146,6 @@
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="RemoveEventPage.h">
-      <DependentUpon>RemoveEventPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="RunSimulationPage.h">
       <DependentUpon>RunSimulationPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -156,10 +156,6 @@
     </ClInclude>
     <ClInclude Include="SettingsPage.h">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="SimulationViewItem.h">
-      <DependentUpon>SimulationViewItem.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="StatePage.h">
@@ -184,9 +180,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="RemoveEventPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="RunSimulationPage.xaml">
@@ -279,6 +272,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EventView.cpp">
+      <DependentUpon>EventView.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="FindEventPage.cpp">
       <DependentUpon>FindEventPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -311,10 +308,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="RemoveEventPage.cpp">
-      <DependentUpon>RemoveEventPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="RunSimulationPage.cpp">
       <DependentUpon>RunSimulationPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -325,10 +318,6 @@
     </ClCompile>
     <ClCompile Include="SettingsPage.cpp">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="SimulationViewItem.cpp">
-      <DependentUpon>SimulationViewItem.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="StatePage.cpp">
@@ -348,6 +337,9 @@
       <DependentUpon>CreateSystemPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="EventView.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="FindEventPage.idl">
       <DependentUpon>FindEventPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -362,10 +354,6 @@
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Midl>
-    <Midl Include="RemoveEventPage.idl">
-      <DependentUpon>RemoveEventPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
     <Midl Include="RunSimulationPage.idl">
       <DependentUpon>RunSimulationPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -377,9 +365,6 @@
     <Midl Include="SettingsPage.idl">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="SimulationViewItem.idl">
-      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="StatePage.idl">
       <DependentUpon>StatePage.xaml</DependentUpon>

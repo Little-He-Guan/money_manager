@@ -10,12 +10,13 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
         
         <StackPanel Orientation="Vertical"
-                    Grid.Row="0">
+                    Grid.Row="0"
+                    Margin="0,0,0,20">
             <TextBox x:Name="Dur_Txt_Input" 
                  Header="Simulation Duration (In days):" 
                  Width="400" 
@@ -24,10 +25,12 @@
                  Margin="0,20,0,5" Text="{Binding Value, ElementName=Dur_Slider_Input, Mode=OneWay}"/>
             <Slider x:Name="Dur_Slider_Input" 
                 Width="400" 
-                Minimum="365" Maximum="1826" 
+                Minimum="30" Maximum="1826" 
                 AutomationProperties.Name="Slider with ticks" 
                 TickFrequency="30" TickPlacement="Outside" />
             <Button Click="Button_Click" Content="Run Simulation" HorizontalAlignment="Center" Margin="0,20,0,20"/>
+
+            <TextBlock x:Name="Sim_Res_Txt" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="16" Margin="0,10,0,10"/>
         </StackPanel>
 
         <CalendarView Grid.Row="1" 

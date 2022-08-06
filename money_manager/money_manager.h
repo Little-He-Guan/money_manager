@@ -63,7 +63,7 @@ public:
 	bool system_loaded = false;
 
 public:
-	static constexpr auto version_str = "1.1";
+	static constexpr auto version_str = "2.0";
 
 private:
 

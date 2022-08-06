@@ -24,7 +24,6 @@ namespace winrt::main_GUI::implementation
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Save_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::SavePage>()));
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Add_Event_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::AddEventPage>()));
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Find_Event_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::FindEventPage>()));
-        m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Remove_Event_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::RemoveEventPage>()));
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Run_Sim_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::RunSimulationPage>()));
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Log_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::LogPage>()));
     }

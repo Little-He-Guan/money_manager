@@ -7,7 +7,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="Button" Click="ClickHandler">Click Me</Button>
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+
+        <TextBlock Loaded="Version_Text_Loaded" x:Name="Version_Text" Text="Money Manager Version " Margin="20,10,0,10"/>
+
+        <HyperlinkButton Content="GitHub Page" NavigateUri="https://github.com/Little-He-Guan/money_manager" Margin="20,10,0,10"/>
+
+        <ToggleSwitch x:Name="Dark_Mode_Toggle" 
+                      IsEnabled="False"
+                      Toggled="Dark_Mode_Toggle_Toggled"
+                      Header="Dark Mode (Currently not supported)"
+                      AutomationProperties.Name="simple ToggleSwitch"
+                      Margin="20,10,0,10"/>
     </StackPanel>
 </Page>
