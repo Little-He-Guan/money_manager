@@ -1,0 +1,5 @@
+MainPackage=E:\VS Project\money_manager\x64\Release\main_GUI\Upload\main_GUI_2.0.0.0_x64.msix
+ResourcePack=E:\VS Project\money_manager\x64\Release\main_GUI\Upload\main_GUI_2.0.0.0_scale-100.msix
+ResourcePack=E:\VS Project\money_manager\x64\Release\main_GUI\Upload\main_GUI_2.0.0.0_scale-125.msix
+ResourcePack=E:\VS Project\money_manager\x64\Release\main_GUI\Upload\main_GUI_2.0.0.0_scale-150.msix
+ResourcePack=E:\VS Project\money_manager\x64\Release\main_GUI\Upload\main_GUI_2.0.0.0_scale-400.msix

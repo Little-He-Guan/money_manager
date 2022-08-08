@@ -51,3 +51,7 @@ documentation/*.ind
 # UWP
 packages/
 main_GUI/Generated\ Files/
+AppPackages/
+
+# Publish to MS Store
+#listings/
