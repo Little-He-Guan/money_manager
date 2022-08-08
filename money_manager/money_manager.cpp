@@ -8,14 +8,10 @@
 
 #include <stdexcept>
 
-#ifdef _WIN32
-#include <io.h>
-#include < fcntl.h >
-#endif // _WIN32
+namespace fs = std::filesystem;
 
 constexpr auto save_file_name = "save.sav";
-
-namespace fs = std::filesystem;
+const fs::path save_file_path = fs::temp_directory_path().parent_path().parent_path() / "money_manager" / save_file_name;
 
 constexpr auto sf_second_line_regex = "((?:[\\d]*[.])?[\\d]+) ((?:[\\d]*[.])?[\\d]+)";
 const std::regex sf_second_line_regex_obj(sf_second_line_regex);
@@ -30,15 +26,14 @@ bool money_manager::load_from_file(std::string path)
 {
 	if (!system_loaded)
 	{
-		fs::path save_path(path.empty() ? save_file_name : path);
-
-		// create the file if does not exist
-		if (!fs::exists(save_path))
+		if (!fs::exists(save_file_path))
 		{
-			std::ofstream(save_path);
+			// create the file if not exist
+			std::ofstream o(save_file_path);
+			o.close();
 		}
 
-		std::ifstream sf(save_path, std::ios::in);
+		std::ifstream sf(save_file_path, std::ios::in);
 		
 		if (!sf.is_open())
 		{
@@ -235,12 +230,10 @@ bool money_manager::load_from_file(std::string path)
 
 void money_manager::save_back_to_file(std::string path)
 {
-	fs::path save_path(path.empty() ? save_file_name : path);
-
 	if (system_loaded) // do not write the default constructed system to file
 	{
 		// overwrite the file
-		std::ofstream sf(save_path, std::ios::out | std::ios::trunc);
+		std::ofstream sf(save_file_path, std::ios::out | std::ios::trunc);
 
 		sf << sys.get_date().to_string() << std::endl;
 		sf << sys.get_cash() << " " << sys.get_expectation() << std::endl;

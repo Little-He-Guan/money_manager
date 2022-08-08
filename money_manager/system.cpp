@@ -2,12 +2,7 @@
 
 #include "system.h"
 
-#ifdef _WIN32
-#include <io.h>
-#include < fcntl.h >
-#endif // _WIN32
-
-const std::filesystem::path log_file_path(log_file_name);
+const std::filesystem::path log_file_path = std::filesystem::temp_directory_path().parent_path().parent_path() / "money_manager" / log_file_name;
 
 void (*financial_system::record_handler_UWP)(financial_system::event_type, const void*, double) = nullptr;
 
@@ -252,5 +247,14 @@ void financial_system::record_event(event_type type, const void* p_event, double
 		}
 
 		lf.close();
+	}
+}
+
+void init_directory()
+{
+	static auto path = std::filesystem::temp_directory_path().parent_path() / "money_manager";
+	if (!std::filesystem::exists(path))
+	{
+		std::filesystem::create_directory(path);
 	}
 }

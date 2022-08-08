@@ -10,6 +10,8 @@ namespace fs = std::filesystem;
 
 void command_line_interpreter::start_cli()
 {
+	init_directory();
+
 	bool load_successful = mgr.start();
 
 	io.enable_coloring();

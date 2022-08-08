@@ -179,3 +179,5 @@ public:
 
 constexpr auto log_file_name = "log.log";
 extern const std::filesystem::path log_file_path;
+
+void init_directory();
