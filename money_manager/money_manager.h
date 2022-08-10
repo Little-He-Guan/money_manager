@@ -3,6 +3,8 @@
 #include "system.h"
 #include "command_interpreter.h"
 
+#include <atomic>
+
 #include <fstream>
 
 #ifdef _WIN32
@@ -60,7 +62,7 @@ public:
 	unsigned default_simulation_duration = 730;
 	unsigned default_prediction_duration = 30;
 
-	bool system_loaded = false;
+	mutable std::atomic_bool system_loaded = false;
 
 public:
 	static constexpr auto version_str = "2.0";
@@ -68,6 +70,8 @@ public:
 private:
 
 };
+
+std::string double_to_string_high_precision(double d);
 
 // non-negative integer
 constexpr auto integer_regex = "[\\d]+";

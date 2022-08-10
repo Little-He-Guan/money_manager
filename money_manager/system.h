@@ -7,9 +7,25 @@
 #include <map>
 #include <filesystem>
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif
+#include <experimental/coroutine>
+
+struct my_fire_and_forget {};
+
+template <typename... Args>
+struct std::experimental::coroutine_traits<my_fire_and_forget, Args...>
+{
+	struct promise_type
+	{
+		my_fire_and_forget get_return_object()
+		{
+			return {};
+		}
+		std::experimental::suspend_never initial_suspend() noexcept { return {}; }
+		std::experimental::suspend_never final_suspend() noexcept { return {}; }
+		void return_void() {}
+		void unhandled_exception() {}
+	};
+};
 
 /*
 * The ADT that represents the system (see the documentation)
@@ -174,7 +190,7 @@ protected:
 	double expectation;
 
 public:
-	static void (*record_handler_UWP)(event_type , const void* , double);
+	static my_fire_and_forget (*record_handler_UWP)(event_type , const void* , double);
 };
 
 constexpr auto log_file_name = "log.log";

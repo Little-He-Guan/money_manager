@@ -2,9 +2,17 @@
 
 #include "../money_manager/money_manager.h"
 
-#include <Windows.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.UI.Xaml.Controls.h>
+
+#include <functional>
+
+namespace wf = winrt::Windows::Foundation;
+namespace wuxc = winrt::Windows::UI::Xaml::Controls;
 
 extern money_manager g_mgr;
+extern std::atomic_bool load_system_completed;
+extern std::atomic_bool save_system_completed;
 
 constexpr auto integer_wregex = L"[\\d]+";
 constexpr auto double_wregex = L"((?:[\\d]*[.])?[\\d]+)";
@@ -25,8 +33,19 @@ constexpr auto log_file_name_w = L"log.log";
 // UWP sucks with std::fstream :(
 // We must instead use the system's APIs.
 
-bool load_system_from_file_UWP();
-void save_system_back_to_file_UWP();
+/*
+* Loads the system asynchrounously from the file
+* 
+* @param call_back As the program may load the system from files multiple times, the change may needs to be refelcted somewhere on the UI.
+* Thus a parameter of a callback introduced, which is called after all the work is completed and after the coroutine switches the thread back to the UI thread.
+*/
+winrt::fire_and_forget load_system_from_file_UWP(std::function<void()> call_back = {});
+/*
+* Saves the system asynchrounously back to file
+* 
+* @param call_back See above
+*/
+winrt::fire_and_forget save_system_back_to_file_UWP(std::function<void()> call_back = {});
 
-void record_event_UWP(financial_system::event_type type, const void* p_event, double amount);
+my_fire_and_forget record_event_UWP(financial_system::event_type type, const void* p_event, double amount);
 void register_event_record_handler_UWP();

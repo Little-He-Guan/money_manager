@@ -3,6 +3,7 @@
 #include "App.h"
 #include "MainPage.h"
 
+#include "date_convertion.h"
 #include "internal_sys.h"
 
 using namespace winrt;
@@ -43,6 +44,10 @@ App::App()
 /// <param name="e">Details about the launch request and process.</param>
 void App::OnLaunched(LaunchActivatedEventArgs const& e)
 {
+    // get the dates always
+    set_cur_date(money_manager::get_current_date());
+    set_cur_DateTime();
+
     Frame rootFrame{ nullptr };
     auto content = Window::Current().Content();
     if (content)
@@ -73,7 +78,14 @@ void App::OnLaunched(LaunchActivatedEventArgs const& e)
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(xaml_typename<main_GUI::MainPage>(), box_value(e.Arguments()));
+                if (load_system_completed)
+                {
+                    rootFrame.Navigate(xaml_typename<main_GUI::MainPage>(), box_value(e.Arguments()));
+                }
+                else
+                {
+                    rootFrame.Navigate(xaml_typename<main_GUI::LoadingPage>(), box_value(e.Arguments()));
+                }
             }
             // Place the frame in the current Window
             Window::Current().Content(rootFrame);
@@ -90,13 +102,27 @@ void App::OnLaunched(LaunchActivatedEventArgs const& e)
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(xaml_typename<main_GUI::MainPage>(), box_value(e.Arguments()));
+                if (load_system_completed)
+                {
+                    rootFrame.Navigate(xaml_typename<main_GUI::MainPage>(), box_value(e.Arguments()));
+                }
+                else
+                {
+                    rootFrame.Navigate(xaml_typename<main_GUI::LoadingPage>(), box_value(e.Arguments()));
+                }
             }
             // Ensure the current window is active
             Window::Current().Activate();
         }
     }
 
+    auto close_loading_page = [=]() ->void
+    {
+        rootFrame.Navigate(xaml_typename<main_GUI::MainPage>(), box_value(e.Arguments()));
+    };
+
+    // loads the system when the app starts
+    ::load_system_from_file_UWP(close_loading_page);
     ::register_event_record_handler_UWP();
 }
 
@@ -109,7 +135,8 @@ void App::OnLaunched(LaunchActivatedEventArgs const& e)
 /// <param name="e">Details about the suspend request.</param>
 void App::OnSuspending([[maybe_unused]] IInspectable const& sender, [[maybe_unused]] SuspendingEventArgs const& e)
 {
-    // Save application state and stop any background activity
+    // Save the system 
+    ::save_system_back_to_file_UWP();
 }
 
 /// <summary>

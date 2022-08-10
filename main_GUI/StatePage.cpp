@@ -40,16 +40,27 @@ void winrt::main_GUI::implementation::StatePage::OnNavigatedTo(Windows::UI::Xaml
 
 void winrt::main_GUI::implementation::StatePage::Update_State()
 {
-    if (g_mgr.system_loaded)
+    if (load_system_completed)
     {
-        Sys_Loaded_Text().Foreground(Media::SolidColorBrush(Windows::UI::Colors::Green()));
-        Sys_Loaded_Text().Text(L"System Loaded!");
+        if (g_mgr.system_loaded)
+        {
+            Sys_Loaded_Text().Foreground(wuxm::SolidColorBrush(wu::Colors::Green()));
+            Sys_Loaded_Text().Text(L"System Loaded!");
 
-        std::string state_str = g_mgr.sys.to_string();
-        Sys_State_Text().Text(std::wstring(state_str.begin(), state_str.end()));
+            std::string state_str = g_mgr.sys.to_string();
+            Sys_State_Text().Text(std::wstring(state_str.begin(), state_str.end()));
+        }
+        else
+        {
+            Sys_Loaded_Text().Foreground(wuxm::SolidColorBrush(wu::Colors::Red()));
+            Sys_Loaded_Text().Text(L"You have no system now. Create a new one to use the program.");
+            Sys_State_Text().Text(L"System not Loaded.");
+        }
     }
     else
     {
-        // do nothing. the default texts will do
+        Sys_Loaded_Text().Foreground(wuxm::SolidColorBrush(wu::Colors::Red()));
+        Sys_Loaded_Text().Text(L"Loading.");
+        Sys_State_Text().Text(L"Please wait...");
     }
 }

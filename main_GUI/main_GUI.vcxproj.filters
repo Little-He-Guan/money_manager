@@ -29,6 +29,9 @@
     <Page Include="LogPage.xaml">
       <Filter>Pages</Filter>
     </Page>
+    <Page Include="LoadingPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />

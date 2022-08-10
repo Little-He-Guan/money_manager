@@ -4,7 +4,7 @@
 
 const std::filesystem::path log_file_path = std::filesystem::temp_directory_path().parent_path().parent_path() / "money_manager" / log_file_name;
 
-void (*financial_system::record_handler_UWP)(financial_system::event_type, const void*, double) = nullptr;
+my_fire_and_forget(*financial_system::record_handler_UWP)(financial_system::event_type, const void*, double) = nullptr;
 
 financial_system& financial_system::operator=(const financial_system& right)
 {

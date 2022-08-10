@@ -30,28 +30,33 @@ namespace winrt::main_GUI::implementation
         throw hresult_not_implemented();
     }
 
-    void LogPage::UpdateLines()
+    winrt::fire_and_forget LogPage::UpdateLines()
     {
-        update_log_lines();
+        // capture calling thread context.
+        winrt::apartment_context ui_thread;
+        // get strong this so it will not expire
+        auto strong_this = get_strong();
+        // and switch to a background thread
+        co_await winrt::resume_background();
 
-        auto size = Log_View().Items().Size();
+        auto log_file{ co_await Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(log_file_name_w, ws::CreationCollisionOption::OpenIfExists) };
+
+        auto log_lines{ co_await ws::FileIO::ReadLinesAsync(log_file) };
+
+        // switch back to UI thread
+        co_await ui_thread;
+
+        auto size = strong_this->Log_View().Items().Size();
 
         if (size == 0)
         {
             for (const auto& line : log_lines)
             {
-                Log_View().Items().Append(main_GUI::LogView(line));
+                strong_this->Log_View().Items().Append(main_GUI::LogView(line));
             }
         }
     }
 
-}
-
-void winrt::main_GUI::implementation::LogPage::update_log_lines()
-{
-    Windows::Storage::StorageFile log_file = Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(log_file_name_w, ws::CreationCollisionOption::OpenIfExists).get();
-
-    log_lines = ws::FileIO::ReadLinesAsync(log_file).get();
 }
 
 void winrt::main_GUI::implementation::LogPage::Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)

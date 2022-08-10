@@ -5,6 +5,9 @@
 
 struct date;
 
+// disable type convertion warning for now
+#pragma warning(disable : 4244)
+
 /*
 * Expect the string to be in the form MM-DD-YYYY (MM and DD can be 1 digit, and YYYY can be any number of digits)
 * 
@@ -511,6 +514,9 @@ constexpr int date::operator-(date d) const
 		return res;
 	}
 }
+
+#pragma warning(default : 4244)
+
 /*
 * These mark important time points in a year.
 * One can copy any of these and adjust the year as he wants.

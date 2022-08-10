@@ -8,7 +8,9 @@ namespace winrt::main_GUI::implementation
         App();
 
         void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const&);
+        // save the system here
         void OnSuspending(IInspectable const&, Windows::ApplicationModel::SuspendingEventArgs const&);
         void OnNavigationFailed(IInspectable const&, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs const&);
+
     };
 }

@@ -40,7 +40,7 @@ void winrt::main_GUI::implementation::CreateSystemPage::Button_Click(winrt::Wind
         if (cash >= exp && exp >= 0)
         {
             g_mgr.sys = financial_system(cash, exp, ::cur_date);
-            g_mgr.system_loaded = true;
+            g_mgr.system_loaded.store(true);
 
             Error_Message().Foreground(Media::SolidColorBrush(Colors::Green()));
             Error_Message().Text(L"System Created!");

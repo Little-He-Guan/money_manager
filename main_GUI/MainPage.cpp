@@ -14,10 +14,6 @@ namespace winrt::main_GUI::implementation
     {
         InitializeComponent();
 
-        // initialize the dates
-        set_cur_date(money_manager::get_current_date());
-        set_cur_DateTime();
-
         // load the pages
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"State_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::StatePage>()));
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Create_System_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::CreateSystemPage>()));
@@ -40,27 +36,10 @@ namespace winrt::main_GUI::implementation
     }
 }
 
-
 namespace wuxc = winrt::Windows::UI::Xaml::Controls;
 
 void winrt::main_GUI::implementation::MainPage::Main_Menu_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    // initialize the system
-    bool load_successful = ::load_system_from_file_UWP();
-    // update the system state.
-    if (load_successful)
-    {
-        g_mgr.system_loaded = true;
-        if (zero_date != ::cur_date)
-        {
-            g_mgr.sys.advance_until(::cur_date);
-        }
-        else
-        {
-            throw std::runtime_error("Unexpected error: cannot get current date");
-        }
-    }
-
     // Add handler for ContentFrame navigation.
     ContentFrame().Navigated({ this, &MainPage::On_Navigated });
 

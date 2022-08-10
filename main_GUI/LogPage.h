@@ -14,7 +14,7 @@ namespace winrt::main_GUI::implementation
         int32_t MyProperty();
         void MyProperty(int32_t value);
 
-        void UpdateLines();
+        winrt::fire_and_forget UpdateLines();
 
     private:
         static Windows::Foundation::Collections::IVector<winrt::hstring> log_lines;

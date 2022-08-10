@@ -28,8 +28,11 @@ namespace winrt::main_GUI::implementation
 
     void SavePage::ClickHandler(IInspectable const&, RoutedEventArgs const&)
     {
-        ::save_system_back_to_file_UWP();
+        auto update_save_state = [this, strong_this {get_strong()} /*Capture a strong this to keep this valid*/]() -> void
+        {
+            Msg_Text().Text(L"Save Successful!");
+        };
 
-        Msg_Text().Text(L"Save Successful!");
+        ::save_system_back_to_file_UWP(update_save_state);
     }
 }

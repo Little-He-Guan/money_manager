@@ -173,7 +173,7 @@ void command_line_interpreter::handle_command()
 						throw std::runtime_error("Unexpected error: cannot get current date");
 					}
 
-					mgr.system_loaded = true;
+					mgr.system_loaded.store(true);
 					io.write_command_output(command_interpreter::apply_color("System initialized successfully!", command_interpreter::f_green));
 				}
 			}

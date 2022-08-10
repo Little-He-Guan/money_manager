@@ -1,0 +1,9 @@
+namespace main_GUI
+{
+    [default_interface]
+    runtimeclass LoadingPage : Windows.UI.Xaml.Controls.Page
+    {
+        LoadingPage();
+        Int32 MyProperty;
+    }
+}

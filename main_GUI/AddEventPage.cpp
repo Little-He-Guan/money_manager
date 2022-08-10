@@ -154,7 +154,7 @@ void winrt::main_GUI::implementation::AddEventPage::Button_Click(winrt::Windows:
         }
         else // proposals
         {
-            int sim_duration = Dur_Slider_Input().Value();
+            sim_duration = Dur_Slider_Input().Value();
             simulation sim(g_mgr.sys, cur_date + sim_duration);
 
             SET_SUCCESS_MESSAGE(Error_Message(), L"You are adding a proposal. Please switch to the simulation area for simulation result and to continue your operation.");

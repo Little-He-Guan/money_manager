@@ -8,6 +8,8 @@
 
 #include <stdexcept>
 
+#include <sstream>
+
 namespace fs = std::filesystem;
 
 constexpr auto save_file_name = "save.sav";
@@ -235,6 +237,9 @@ void money_manager::save_back_to_file(std::string path)
 		// overwrite the file
 		std::ofstream sf(save_file_path, std::ios::out | std::ios::trunc);
 
+		// output money precisely.
+		sf << std::fixed;
+
 		sf << sys.get_date().to_string() << std::endl;
 		sf << sys.get_cash() << " " << sys.get_expectation() << std::endl;
 
@@ -267,7 +272,7 @@ bool money_manager::start()
 	// update the system state.
 	if (load_successful)
 	{
-		system_loaded = true;
+		system_loaded.store(true);
 		date cur_date = get_current_date();
 		if (zero_date != cur_date)
 		{
@@ -299,4 +304,12 @@ date money_manager::get_current_date()
 	{
 		return zero_date;
 	}
+}
+
+std::string double_to_string_high_precision(double d)
+{
+	std::ostringstream ss;
+	ss << std::fixed;
+	ss << d;
+	return ss.str();
 }
