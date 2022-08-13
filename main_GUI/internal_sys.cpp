@@ -1,18 +1,12 @@
-#include "internal_sys.h"
-
 #include "pch.h"
 
-#include <Windows.h>
-#include <winrt/Windows.ApplicationModel.h>
-#include <winrt/Windows.Storage.h>
-#include <winrt/Windows.Storage.Streams.h>
-#include <winrt/Windows.Security.Cryptography.h>
+#include "internal_sys.h"
 
 #include "date_convertion.h"
 
-namespace ws = Windows::Storage;
-namespace wfc = Windows::Foundation::Collections;
-namespace wsc = Windows::Security::Cryptography;
+#include "App.h"
+#include "MainPage.h"
+#include "LoadingPage.h"
 
 money_manager g_mgr;
 
@@ -52,170 +46,11 @@ winrt::fire_and_forget load_system_from_file_UWP(std::function<void()> call_back
 
             co_return;
         }
-
-        date saved_date;
-        double cash, expectation;
-
-        int num_ot_p, num_p_p, num_i;
-
-        std::string name;
-        date start, end;
-        double amount, actual;
-        financial_event::effective_duration type;
-
-        std::wstring line;
-
-        // first line: date
+        else
         {
-            line = lines.GetAt(0);
-
-            saved_date = string_to_date(winrt::to_string(line));
-
-            if (zero_date == saved_date)
+            if (!load_system_from_strings_UWP(lines, g_mgr.sys))
             {
                 throw std::runtime_error("Unexpected error: save file corrupted");
-            }
-        }
-
-
-        // second line: cash and expectation
-        {
-            line = lines.GetAt(1);
-
-            std::wsmatch match;
-            if (!std::regex_match(line, match, sf_second_line_wregex_obj))
-            {
-                throw std::runtime_error("Unexpected error: save file corrupted");
-            }
-            else
-            {
-                cash = std::stof(match[1].str());
-                expectation = std::stof(match[2].str());
-            }
-        }
-
-        // set what's already read
-        g_mgr.sys.reset(cash, expectation, saved_date);
-
-        // third line: number of ot-proposals
-        {
-            line = lines.GetAt(2);
-
-            if (!std::regex_match(line, integer_wregex_obj))
-            {
-                throw std::runtime_error("Unexpected error: save file corrupted");
-            }
-            else
-            {
-                num_ot_p = std::stoi(line);
-            }
-        }
-
-        // lines of ot-proposals
-        {
-            for (int i = 0; i != num_ot_p; ++i)
-            {
-                line = lines.GetAt(3 + i);
-
-                std::wsmatch match;
-                if (!std::regex_match(line, match, sf_event_line_wregex_obj))
-                {
-                    throw std::runtime_error("Unexpected error: save file corrupted");
-                }
-                else
-                {
-                    name = winrt::to_string(match[1].str());
-                    start = string_to_date(winrt::to_string(match[2].str())); end = string_to_date(winrt::to_string(match[3].str()));
-                    if (zero_date == start || zero_date == end)
-                    {
-                        throw std::runtime_error("Unexpected error: save file corrupted");
-                    }
-                    amount = std::stof(match[4].str());
-                    actual = std::stof(match[5].str());
-                    type = (financial_event::effective_duration)std::stoi(match[6].str());
-
-                    g_mgr.sys.emplace_ot_proposal(name, amount, actual, start, end, type);
-                }
-            }
-        }
-
-        // number of p_proposals
-        {
-            line = lines.GetAt(3 + num_ot_p);
-
-            if (!std::regex_match(line, integer_wregex_obj))
-            {
-                throw std::runtime_error("Unexpected error: save file corrupted");
-            }
-            else
-            {
-                num_p_p = std::stoi(line);
-            }
-        }
-
-        // lines of p-proposals
-        for (int i = 0; i != num_p_p; ++i)
-        {
-            line = lines.GetAt(3 + num_ot_p + 1 + i);
-
-            std::wsmatch match;
-            if (!std::regex_match(line, match, sf_event_line_wregex_obj))
-            {
-                throw std::runtime_error("Unexpected error: save file corrupted");
-            }
-            else
-            {
-                name = winrt::to_string(match[1].str());
-                start = string_to_date(winrt::to_string(match[2].str())); end = string_to_date(winrt::to_string(match[3].str()));
-                if (zero_date == start || zero_date == end)
-                {
-                    throw std::runtime_error("Unexpected error: save file corrupted");
-                }
-                amount = std::stof(match[4].str());
-                actual = std::stof(match[5].str());
-                type = (financial_event::effective_duration)std::stoi(match[6].str());
-
-                g_mgr.sys.emplace_p_proposal(name, amount, actual, start, end, type);
-            }
-        }
-
-        // number of p_proposals
-        {
-            line = lines.GetAt(3 + num_ot_p + 1 + num_p_p);
-
-            if (!std::regex_match(line, integer_wregex_obj))
-            {
-                throw std::runtime_error("Unexpected error: save file corrupted");
-            }
-            else
-            {
-                num_i = std::stoi(line);
-            }
-        }
-
-        // lines of p-proposals
-        for (int i = 0; i != num_i; ++i)
-        {
-            line = lines.GetAt(3 + num_ot_p + 1 + num_p_p + 1 + i);
-
-            std::wsmatch match;
-            if (!std::regex_match(line, match, sf_event_line_wregex_obj))
-            {
-                throw std::runtime_error("Unexpected error: save file corrupted");
-            }
-            else
-            {
-                name = winrt::to_string(match[1].str());
-                start = string_to_date(winrt::to_string(match[2].str())); end = string_to_date(winrt::to_string(match[3].str()));
-                if (zero_date == start || zero_date == end)
-                {
-                    throw std::runtime_error("Unexpected error: save file corrupted");
-                }
-                amount = std::stof(match[4].str());
-                actual = std::stof(match[5].str());
-                type = (financial_event::effective_duration)std::stoi(match[6].str());
-
-                g_mgr.sys.emplace_fixed_income(name, amount, actual, start, end, type);
             }
         }
 
@@ -285,6 +120,177 @@ winrt::fire_and_forget save_system_back_to_file_UWP(std::function<void()> call_b
     if (call_back) call_back();
 }
 
+bool load_system_from_strings_UWP(const wfc::IVector<winrt::hstring>& lines, financial_system& sys)
+{
+    date saved_date;
+    double cash, expectation;
+
+    int num_ot_p, num_p_p, num_i;
+
+    std::string name;
+    date start, end;
+    double amount, actual;
+    financial_event::effective_duration type;
+
+    std::wstring line;
+
+    // first line: date
+    {
+        line = lines.GetAt(0);
+
+        saved_date = string_to_date(winrt::to_string(line));
+
+        if (zero_date == saved_date)
+        {
+            return false;
+        }
+    }
+
+
+    // second line: cash and expectation
+    {
+        line = lines.GetAt(1);
+
+        std::wsmatch match;
+        if (!std::regex_match(line, match, sf_second_line_wregex_obj))
+        {
+            return false;
+        }
+        else
+        {
+            cash = std::stof(match[1].str());
+            expectation = std::stof(match[2].str());
+        }
+    }
+
+    // set what's already read
+    sys.reset(cash, expectation, saved_date);
+
+    // third line: number of ot-proposals
+    {
+        line = lines.GetAt(2);
+
+        if (!std::regex_match(line, integer_wregex_obj))
+        {
+            return false;
+        }
+        else
+        {
+            num_ot_p = std::stoi(line);
+        }
+    }
+
+    // lines of ot-proposals
+    {
+        for (int i = 0; i != num_ot_p; ++i)
+        {
+            line = lines.GetAt(3 + i);
+
+            std::wsmatch match;
+            if (!std::regex_match(line, match, sf_event_line_wregex_obj))
+            {
+                return false;
+            }
+            else
+            {
+                name = winrt::to_string(match[1].str());
+                start = string_to_date(winrt::to_string(match[2].str())); end = string_to_date(winrt::to_string(match[3].str()));
+                if (zero_date == start || zero_date == end)
+                {
+                    return false;
+                }
+                amount = std::stof(match[4].str());
+                actual = std::stof(match[5].str());
+                type = (financial_event::effective_duration)std::stoi(match[6].str());
+
+                sys.emplace_ot_proposal(name, amount, actual, start, end, type);
+            }
+        }
+    }
+
+    // number of p_proposals
+    {
+        line = lines.GetAt(3 + num_ot_p);
+
+        if (!std::regex_match(line, integer_wregex_obj))
+        {
+            return false;
+        }
+        else
+        {
+            num_p_p = std::stoi(line);
+        }
+    }
+
+    // lines of p-proposals
+    for (int i = 0; i != num_p_p; ++i)
+    {
+        line = lines.GetAt(3 + num_ot_p + 1 + i);
+
+        std::wsmatch match;
+        if (!std::regex_match(line, match, sf_event_line_wregex_obj))
+        {
+            return false;
+        }
+        else
+        {
+            name = winrt::to_string(match[1].str());
+            start = string_to_date(winrt::to_string(match[2].str())); end = string_to_date(winrt::to_string(match[3].str()));
+            if (zero_date == start || zero_date == end)
+            {
+                return false;
+            }
+            amount = std::stof(match[4].str());
+            actual = std::stof(match[5].str());
+            type = (financial_event::effective_duration)std::stoi(match[6].str());
+
+            sys.emplace_p_proposal(name, amount, actual, start, end, type);
+        }
+    }
+
+    // number of p_proposals
+    {
+        line = lines.GetAt(3 + num_ot_p + 1 + num_p_p);
+
+        if (!std::regex_match(line, integer_wregex_obj))
+        {
+            return false;
+        }
+        else
+        {
+            num_i = std::stoi(line);
+        }
+    }
+
+    // lines of p-proposals
+    for (int i = 0; i != num_i; ++i)
+    {
+        line = lines.GetAt(3 + num_ot_p + 1 + num_p_p + 1 + i);
+
+        std::wsmatch match;
+        if (!std::regex_match(line, match, sf_event_line_wregex_obj))
+        {
+            return false;
+        }
+        else
+        {
+            name = winrt::to_string(match[1].str());
+            start = string_to_date(winrt::to_string(match[2].str())); end = string_to_date(winrt::to_string(match[3].str()));
+            if (zero_date == start || zero_date == end)
+            {
+                return false;
+            }
+            amount = std::stof(match[4].str());
+            actual = std::stof(match[5].str());
+            type = (financial_event::effective_duration)std::stoi(match[6].str());
+
+            sys.emplace_fixed_income(name, amount, actual, start, end, type);
+        }
+    }
+
+    return true;
+}
+
 my_fire_and_forget record_event_UWP(financial_system::event_type type, const void* p_event, double amount)
 {
     // switch to background non-UI thread
@@ -334,4 +340,50 @@ my_fire_and_forget record_event_UWP(financial_system::event_type type, const voi
 void register_event_record_handler_UWP()
 {
     financial_system::record_handler_UWP = &record_event_UWP;
+}
+
+void switch_to_loading_page()
+{
+	wuxc::Frame rootFrame{ nullptr };
+	auto content = wux::Window::Current().Content();
+	if (content)
+	{
+		rootFrame = content.try_as<wuxc::Frame>();
+	}
+
+	rootFrame.Navigate(xaml_typename<main_GUI::LoadingPage>());
+
+    // Place the frame in the current Window
+    wux::Window::Current().Content(rootFrame);
+    // Ensure the current window is active
+    //wux::Window::Current().Activate();
+}
+
+void switch_back_to_main_page()
+{
+    wuxc::Frame rootFrame{ nullptr };
+    auto content = wux::Window::Current().Content();
+    if (content)
+    {
+        rootFrame = content.try_as<wuxc::Frame>();
+    }
+
+    rootFrame.Navigate(xaml_typename<main_GUI::MainPage>());
+
+    // Place the frame in the current Window
+    wux::Window::Current().Content(rootFrame);
+    // Ensure the current window is active
+    //wux::Window::Current().Activate();
+}
+
+void switch_back_to_previous_page()
+{
+    wuxc::Frame rootFrame{ nullptr };
+    auto content = wux::Window::Current().Content();
+    if (content)
+    {
+        rootFrame = content.try_as<wuxc::Frame>();
+    }
+
+    rootFrame.GoBack();
 }

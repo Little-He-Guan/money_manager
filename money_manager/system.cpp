@@ -252,7 +252,8 @@ void financial_system::record_event(event_type type, const void* p_event, double
 
 void init_directory()
 {
-	static auto path = std::filesystem::temp_directory_path().parent_path() / "money_manager";
+	// $AppData$
+	static auto path = std::filesystem::temp_directory_path().parent_path().parent_path() / "money_manager";
 	if (!std::filesystem::exists(path))
 	{
 		std::filesystem::create_directory(path);

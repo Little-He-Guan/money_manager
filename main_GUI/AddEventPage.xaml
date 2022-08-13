@@ -44,7 +44,7 @@
             <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
                 <TextBox 
                     x:Name="Name_Input"
-                    Header="Enter Event Name"
+                    Header="Enter Event Name (Space is not allowed)"
                     PlaceholderText="A name is required"
                     TextChanged="Name_Input_TextChanged"
                     Margin="5,10,5,10"

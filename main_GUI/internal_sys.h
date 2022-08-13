@@ -2,12 +2,10 @@
 
 #include "../money_manager/money_manager.h"
 
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Xaml.Controls.h>
-
-#include <functional>
+#include "pch.h"
 
 namespace wf = winrt::Windows::Foundation;
+namespace wfc = winrt::Windows::Foundation::Collections;
 namespace wuxc = winrt::Windows::UI::Xaml::Controls;
 
 extern money_manager g_mgr;
@@ -47,5 +45,17 @@ winrt::fire_and_forget load_system_from_file_UWP(std::function<void()> call_back
 */
 winrt::fire_and_forget save_system_back_to_file_UWP(std::function<void()> call_back = {});
 
+// Loads sys from strings
+// @returns true if it's loaded, or false if the strings do not describe a valid system.
+bool load_system_from_strings_UWP(const wfc::IVector<winrt::hstring>& strings, financial_system& sys);
+
 my_fire_and_forget record_event_UWP(financial_system::event_type type, const void* p_event, double amount);
 void register_event_record_handler_UWP();
+
+// switches the app's content to loading page
+// @returns the previous content
+void switch_to_loading_page();
+// switches it back to main page
+void switch_back_to_main_page();
+// goes back to the previous page the app holds
+void switch_back_to_previous_page();

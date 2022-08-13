@@ -8,10 +8,37 @@
     mc:Ignorable="d">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock x:Name="Msg_Text" Foreground="Green" Margin="0,10,0,10"/>
         
-        <Button x:Name="Button" Click="ClickHandler">
-            <TextBlock Text="Save System To File" FontSize="20"/>
+        <ProgressRing x:Name="Saving_Progress" Width="100" Height="100"/>
+
+        <TextBlock x:Name="Msg_Text" Foreground="Green" Margin="0,10,0,10" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+
+        <Button x:Name="Button" Click="ClickHandler" Margin="0,10,0,10" HorizontalAlignment="Center">
+            <TextBlock Text="Save System To File" FontSize="40"/>
         </Button>
+
+        <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="0,10,0,10" >
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,5">
+                <DropDownButton Content="Export File" 
+                                FontSize="20" HorizontalAlignment="Center" Margin="5,0,5,0">
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Click="MenuFlyoutItem_Click" Text="Export Save File" FontSize="20"/>
+                            <MenuFlyoutItem Click="MenuFlyoutItem_Click_1" Text="Export Log File" FontSize="20"/>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+
+                <DropDownButton Content="Import File" FontSize="20" HorizontalAlignment="Center" Margin="5,0,5,0">
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Click="MenuFlyoutItem_Click_2" Text="Import Save File" FontSize="20"/>
+                            <MenuFlyoutItem Click="MenuFlyoutItem_Click_3" Text="Import Log File" FontSize="20"/>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+            </StackPanel>
+        </Border>
+
     </StackPanel>
 </Page>
