@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        
+
         <ProgressRing x:Name="Saving_Progress" Width="100" Height="100"/>
 
         <TextBlock x:Name="Msg_Text" Foreground="Green" Margin="0,10,0,10" TextWrapping="Wrap" HorizontalAlignment="Center"/>
@@ -17,7 +17,7 @@
             <TextBlock Text="Save System To File" FontSize="40"/>
         </Button>
 
-        <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="0,10,0,10" >
+        <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="0,10,0,10" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,5">
                 <DropDownButton Content="Export File" 
                                 FontSize="20" HorizontalAlignment="Center" Margin="5,0,5,0">
@@ -39,6 +39,23 @@
                 </DropDownButton>
             </StackPanel>
         </Border>
+        <ContentDialog x:Name="Import_Confirmation_Dialog"
+                       PrimaryButtonText="Continue" IsPrimaryButtonEnabled="False"
+                       CloseButtonText="Cancel"
+                       Opened="Import_Confirmation_Dialog_Opened"
+                       Title="Continue Import?">
 
+            <StackPanel Orientation="Vertical">
+                <TextBlock FontSize="14" TextWrapping="WrapWholeWords">
+                Importing a file will replace the current one, so the current file, and additionally the current system if you are importing a save file, will be irrecoverable after the import. 
+                    It is recommended that the file is exported first to back it up. Do you wish to continue?
+                </TextBlock>
+                <CheckBox x:Name="ConfirmCheckBox"
+                          Margin="0,5,0,0"
+                          Content="I understand the consequences." 
+                          Checked="ConfirmCheckBox_Checked" Unchecked="ConfirmCheckBox_Unchecked">
+                </CheckBox>
+            </StackPanel>
+        </ContentDialog>
     </StackPanel>
 </Page>

@@ -16,11 +16,9 @@ const std::wregex integer_wregex_obj(::integer_wregex);
 const std::wregex sf_second_line_wregex_obj(sf_second_line_wregex);
 const std::wregex sf_event_line_wregex_obj(sf_event_line_wregex);
 
-std::atomic_bool load_system_completed(false);
-
 winrt::fire_and_forget load_system_from_file_UWP(std::function<void()> call_back)
 {
-    if (load_system_completed) // no need to reload
+    if (g_mgr.system_loaded) // no need to reload
     {
         co_return; // do nothing
     }
@@ -38,7 +36,7 @@ winrt::fire_and_forget load_system_from_file_UWP(std::function<void()> call_back
 
         if (lines.Size() < 5) // no system saved in that file
         {
-            load_system_completed.store(true);
+            g_mgr.system_loaded = false;
 
             // reflect the system state by calling the callback (after switching the context)
             co_await ui_thread;
@@ -59,7 +57,6 @@ winrt::fire_and_forget load_system_from_file_UWP(std::function<void()> call_back
 
         // update the system state.
         {
-            load_system_completed.store(true);
             g_mgr.system_loaded.store(true);
             if (zero_date != ::cur_date)
             {
@@ -81,43 +78,50 @@ winrt::fire_and_forget load_system_from_file_UWP(std::function<void()> call_back
 
 winrt::fire_and_forget save_system_back_to_file_UWP(std::function<void()> call_back)
 {
-    // capture calling thread context.
-    winrt::apartment_context calling_thread;
-    // and switch to a background thread
-    co_await winrt::resume_background();
-
-    // replace the file with a new one
-    auto sav_file{ co_await Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(save_file_name_w, ws::CreationCollisionOption::ReplaceExisting) };
-
-    // do not try to write the file line by line using FileIO::writetext
-    // or it would be a mess
-    Windows::Foundation::Collections::IVector<winrt::hstring> lines{ winrt::single_threaded_vector< winrt::hstring>() };
-
-    lines.Append(winrt::to_hstring(g_mgr.sys.get_date().to_string()));
-    lines.Append(winrt::to_hstring(g_mgr.sys.get_cash()) + L" " + winrt::to_hstring(g_mgr.sys.get_expectation()));
-
-    lines.Append(winrt::to_hstring(g_mgr.sys.get_ot_proposals().size()));
-    for (const auto& [n, e] : g_mgr.sys.get_ot_proposals())
+    if (g_mgr.system_loaded) // do not save the system if it's not loaded (i.e. if it's the default system)
     {
-        lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
-    }
+        // capture calling thread context.
+        winrt::apartment_context calling_thread;
+        // and switch to a background thread
+        co_await winrt::resume_background();
 
-    lines.Append(winrt::to_hstring(g_mgr.sys.get_p_proposals().size()));
-    for (const auto& [n, e] : g_mgr.sys.get_p_proposals())
+        // replace the file with a new one
+        auto sav_file{ co_await Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(save_file_name_w, ws::CreationCollisionOption::ReplaceExisting) };
+
+        // do not try to write the file line by line using FileIO::writetext
+        // or it would be a mess
+        Windows::Foundation::Collections::IVector<winrt::hstring> lines{ winrt::single_threaded_vector< winrt::hstring>() };
+
+        lines.Append(winrt::to_hstring(g_mgr.sys.get_date().to_string()));
+        lines.Append(winrt::to_hstring(g_mgr.sys.get_cash()) + L" " + winrt::to_hstring(g_mgr.sys.get_expectation()));
+
+        lines.Append(winrt::to_hstring(g_mgr.sys.get_ot_proposals().size()));
+        for (const auto& [n, e] : g_mgr.sys.get_ot_proposals())
+        {
+            lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
+        }
+
+        lines.Append(winrt::to_hstring(g_mgr.sys.get_p_proposals().size()));
+        for (const auto& [n, e] : g_mgr.sys.get_p_proposals())
+        {
+            lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
+        }
+
+        lines.Append(winrt::to_hstring(g_mgr.sys.get_fixed_incomes().size()));
+        for (const auto& [n, e] : g_mgr.sys.get_fixed_incomes())
+        {
+            lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
+        }
+
+        co_await ws::FileIO::WriteLinesAsync(sav_file, lines);
+
+        co_await calling_thread;
+        if (call_back) call_back();
+    }
+    else
     {
-        lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
+        co_return;
     }
-
-    lines.Append(winrt::to_hstring(g_mgr.sys.get_fixed_incomes().size()));
-    for (const auto& [n, e] : g_mgr.sys.get_fixed_incomes())
-    {
-        lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
-    }
-
-    co_await ws::FileIO::WriteLinesAsync(sav_file, lines);
-
-    co_await calling_thread;
-    if (call_back) call_back();
 }
 
 bool load_system_from_strings_UWP(const wfc::IVector<winrt::hstring>& lines, financial_system& sys)

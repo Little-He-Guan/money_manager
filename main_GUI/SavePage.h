@@ -42,6 +42,11 @@ namespace winrt::main_GUI::implementation
         * 2: operation cancelled
         */
         winrt::fire_and_forget export_file(winrt::hstring filename, std::function<void(int)> callback = {});
+
+    public:
+        void ConfirmCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
+        void ConfirmCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
+        void Import_Confirmation_Dialog_Opened(winrt::Windows::UI::Xaml::Controls::ContentDialog const& sender, winrt::Windows::UI::Xaml::Controls::ContentDialogOpenedEventArgs const& args);
     };
 }
 

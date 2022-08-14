@@ -30,7 +30,7 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:LogView">
-                    <StackPanel MinHeight="75" Width="400" HorizontalAlignment="Center" Background="Blue" Margin="0,10,0,10">
+                    <StackPanel MinHeight="75" Width="400" HorizontalAlignment="Center" Background="{ThemeResource SystemControlHighlightAccentBrush}" Margin="0,10,0,10">
                         <TextBlock Text="{x:Bind Name}" Margin="5, 10, 5, 0" FontSize="20" Foreground="NavajoWhite"/>
                         <TextBlock Text="{x:Bind Date}" Margin="5, 0, 5, 10" FontSize="15" Foreground="NavajoWhite"/>
                         <TextBlock Text="{x:Bind Amount}" Margin="5, 0, 5, 10" FontSize="30" Foreground="White"/>

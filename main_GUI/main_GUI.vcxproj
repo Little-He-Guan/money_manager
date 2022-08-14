@@ -81,7 +81,7 @@
   <PropertyGroup Label="UserMacros">
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>C73197A0EA3C9287C98FEB3269068B4B0343A12C</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>9AAF6ADF615888EDBA06D6B1DD9134591E8E9E53</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
@@ -90,6 +90,7 @@
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <AppxPackageDir>C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\AppPackages\main_GUI_side_load\</AppxPackageDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>

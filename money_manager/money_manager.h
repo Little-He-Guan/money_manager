@@ -65,7 +65,7 @@ public:
 	mutable std::atomic_bool system_loaded = false;
 
 public:
-	static constexpr auto version_str = "2.0.1";
+	static constexpr auto version_str = "2.0.2";
 
 private:
 

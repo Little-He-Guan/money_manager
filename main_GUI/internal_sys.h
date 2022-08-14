@@ -9,7 +9,6 @@ namespace wfc = winrt::Windows::Foundation::Collections;
 namespace wuxc = winrt::Windows::UI::Xaml::Controls;
 
 extern money_manager g_mgr;
-extern std::atomic_bool load_system_completed;
 extern std::atomic_bool save_system_completed;
 
 constexpr auto integer_wregex = L"[\\d]+";
@@ -27,6 +26,8 @@ extern const std::wregex sf_event_line_wregex_obj;
 
 constexpr auto save_file_name_w = L"save.sav";
 constexpr auto log_file_name_w = L"log.log";
+
+constexpr auto theme_settings_entry = L"themeSettings";
 
 // UWP sucks with std::fstream :(
 // We must instead use the system's APIs.

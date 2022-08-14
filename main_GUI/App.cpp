@@ -25,6 +25,21 @@ App::App()
     InitializeComponent();
     Suspending({ this, &App::OnSuspending });
 
+    // set app theme (can only be set now (at start time))
+    {
+        auto settings = ws::ApplicationData::Current().LocalSettings().Values();
+        if (settings.HasKey(theme_settings_entry)) // has previous settings
+        {
+            Application::Current().RequestedTheme((bool)winrt::unbox_value<int>(settings.Lookup(theme_settings_entry)) ? ApplicationTheme::Dark : ApplicationTheme::Light);
+        }
+        else // default: light
+        {
+            Application::Current().RequestedTheme(ApplicationTheme::Light);
+            // create the settings entry
+            settings.Insert(theme_settings_entry, winrt::box_value(0));
+        }
+    }
+
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
     UnhandledException([this](IInspectable const&, UnhandledExceptionEventArgs const& e)
     {
@@ -78,7 +93,7 @@ void App::OnLaunched(LaunchActivatedEventArgs const& e)
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (load_system_completed)
+                if (g_mgr.system_loaded)
                 {
                     rootFrame.Navigate(xaml_typename<main_GUI::MainPage>(), box_value(e.Arguments()));
                 }
@@ -102,7 +117,7 @@ void App::OnLaunched(LaunchActivatedEventArgs const& e)
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (load_system_completed)
+                if (g_mgr.system_loaded)
                 {
                     rootFrame.Navigate(xaml_typename<main_GUI::MainPage>(), box_value(e.Arguments()));
                 }
@@ -122,7 +137,7 @@ void App::OnLaunched(LaunchActivatedEventArgs const& e)
     };
 
     // loads the system when the app starts
-    ::load_system_from_file_UWP(close_loading_page);
+    if(!g_mgr.system_loaded) ::load_system_from_file_UWP(close_loading_page);
     ::register_event_record_handler_UWP();
 }
 

@@ -41,7 +41,7 @@
                     Click="Button_Click"/>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,10">
-            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
+            <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="5,5,5,5">
                 <TextBox 
                     x:Name="Name_Input"
                     Header="Enter Event Name (Space is not allowed)"
@@ -51,7 +51,7 @@
                 />
             </Border>
 
-            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
+            <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="5,5,5,5">
                 <TextBox 
                     x:Name="Amount_Input"
                     Header="Enter Event Amount"
@@ -60,7 +60,7 @@
                 />
             </Border>
 
-            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
+            <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="5,5,5,5">
                 <Grid Margin="20,5,20,5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -96,7 +96,7 @@
                 </Grid>
             </Border>
 
-            <Border BorderThickness="2" BorderBrush="Green" Background="#FFFFFFFF" Margin="5,5,5,5">
+            <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="5,5,5,5">
                 <StackPanel Orientation="Horizontal">
                     <TextBox 
                      x:Name="Dur_Txt_Input" 

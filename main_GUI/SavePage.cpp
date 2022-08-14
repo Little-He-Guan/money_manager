@@ -32,15 +32,22 @@ namespace winrt::main_GUI::implementation
 
     void SavePage::ClickHandler(IInspectable const&, RoutedEventArgs const&)
     {
-        auto update_save_state = [this, strong_this {get_strong()} /*Capture a strong this to keep this valid*/]() -> void
+        if (g_mgr.system_loaded)
         {
-            Msg_Text().Text(L"Save Successful!");
-            Saving_Progress().IsActive(false);
-        };
+            auto update_save_state = [this, strong_this{ get_strong() } /*Capture a strong this to keep this valid*/]() -> void
+            {
+                SET_SUCCESS_MESSAGE(Msg_Text(), L"Successfully saved the system");
+                Saving_Progress().IsActive(false);
+            };
 
-        SET_NORMAL_MESSAGE(Msg_Text(), L"Please wait...");
-        Saving_Progress().IsActive(true);
-        ::save_system_back_to_file_UWP(update_save_state);
+            SET_NORMAL_MESSAGE(Msg_Text(), L"Please wait...");
+            Saving_Progress().IsActive(true);
+            ::save_system_back_to_file_UWP(update_save_state);
+        }
+        else
+        {
+            SET_ERROR_MESSAGE(Msg_Text(), L"There is no system currently.");
+        }
     }
 }
 
@@ -116,7 +123,7 @@ void winrt::main_GUI::implementation::SavePage::MenuFlyoutItem_Click_3(winrt::Wi
         }
         else
         {
-            SET_ERROR_MESSAGE(Msg_Text(), L"The operation was cancelled.");
+            SET_ERROR_MESSAGE(Msg_Text(), L"Operation cancelled.");
         }
     };
 
@@ -128,73 +135,82 @@ winrt::fire_and_forget winrt::main_GUI::implementation::SavePage::import_file(wi
     // capture calling thread context.
     winrt::apartment_context ui_thread;
 
-    SET_NORMAL_MESSAGE(Msg_Text(), L"Please wait...");
-    Saving_Progress().IsActive(true);
-
-    auto picker = ws::Pickers::FileOpenPicker();
-    picker.SuggestedStartLocation(ws::Pickers::PickerLocationId::Desktop);
-    picker.ViewMode(ws::Pickers::PickerViewMode::List);
-
-    std::wstring temp(filename);
-    std::wstring extension(temp.substr(temp.find_last_of(L'.')));
-
-    picker.FileTypeFilter().Append(extension);
-    // no matter what the original name of the picked file is, its content will be copied to become the imported file
-    picker.FileTypeFilter().Append(L"*");
-
-    auto file{ co_await picker.PickSingleFileAsync() };
-
-    // and switch to a background thread
-    co_await winrt::resume_background();
-
-    if (file != nullptr)
+    auto dialog_res { co_await Import_Confirmation_Dialog().ShowAsync() };
+    if (dialog_res == wuxc::ContentDialogResult::Primary) // continue
     {
-        if (extension == L".sav") // the save file has been replace. A system reload is required
-        {
-            // first we see if it's a valid save file by loading a temp system from it.
-            financial_system sys;
+        SET_NORMAL_MESSAGE(Msg_Text(), L"Please wait...");
+        Saving_Progress().IsActive(true);
 
-			auto lines{ co_await ws::FileIO::ReadLinesAsync(file) };
-            bool loaded = false;
-            if (lines.Size() >= 5)
+        auto picker = ws::Pickers::FileOpenPicker();
+        picker.SuggestedStartLocation(ws::Pickers::PickerLocationId::Desktop);
+        picker.ViewMode(ws::Pickers::PickerViewMode::List);
+
+        std::wstring temp(filename);
+        std::wstring extension(temp.substr(temp.find_last_of(L'.')));
+
+        picker.FileTypeFilter().Append(extension);
+        // no matter what the original name of the picked file is, its content will be copied to become the imported file
+        picker.FileTypeFilter().Append(L"*");
+
+        auto file{ co_await picker.PickSingleFileAsync() };
+
+        // and switch to a background thread
+        co_await winrt::resume_background();
+
+        if (file != nullptr)
+        {
+            if (extension == L".sav") // the save file has been replace. A system reload is required
             {
-                loaded = load_system_from_strings_UWP(lines, sys);
+                // first we see if it's a valid save file by loading a temp system from it.
+                financial_system sys;
+
+                auto lines{ co_await ws::FileIO::ReadLinesAsync(file) };
+                bool loaded = false;
+                if (lines.Size() >= 5)
+                {
+                    loaded = load_system_from_strings_UWP(lines, sys);
+                }
+
+                if (loaded) // a valid save file
+                {
+                    // replace the current system with the loaded one
+                    g_mgr.sys = sys;
+                    g_mgr.system_loaded = true;
+                    // replace the save file with the file
+                    co_await file.CopyAsync(ws::ApplicationData::Current().LocalFolder(), save_file_name_w, ws::NameCollisionOption::ReplaceExisting);
+                }
+                else // invalid save file
+                {
+                    co_await ui_thread;
+                    Saving_Progress().IsActive(false);
+                    if (callback) callback(false);
+
+                    co_return;
+                }
+            }
+            else if (extension == L".log") // replace the log file
+            {
+                co_await file.CopyAsync(ws::ApplicationData::Current().LocalFolder(), log_file_name_w, ws::NameCollisionOption::ReplaceExisting);
+            }
+            else // copy as-is
+            {
+                co_await file.CopyAsync(ws::ApplicationData::Current().LocalFolder(), file.Name(), ws::NameCollisionOption::ReplaceExisting);
             }
 
-            if (loaded) // a valid save file
-            {
-                // replace the current system with the loaded one
-                g_mgr.sys = sys;
-                // replace the save file with the file
-                co_await file.CopyAsync(ws::ApplicationData::Current().LocalFolder(), save_file_name_w, ws::NameCollisionOption::ReplaceExisting);
-            }
-            else // invalid save file
-            {
-                co_await ui_thread;
-                Saving_Progress().IsActive(false);
-                if (callback) callback(false);
-
-                co_return;
-            }
+            co_await ui_thread;
+            Saving_Progress().IsActive(false);
+            if (callback) callback(true);
         }
-        else if (extension == L".log") // replace the log file
+        else // operation cancelled
         {
-            co_await file.CopyAsync(ws::ApplicationData::Current().LocalFolder(), log_file_name_w, ws::NameCollisionOption::ReplaceExisting);
+            co_await ui_thread;
+            Saving_Progress().IsActive(false);
+            if (callback) callback(false);
         }
-        else // copy as-is
-        {
-            co_await file.CopyAsync(ws::ApplicationData::Current().LocalFolder(), file.Name(), ws::NameCollisionOption::ReplaceExisting);
-        }
-
-        co_await ui_thread;
-        Saving_Progress().IsActive(false);
-        if (callback) callback(true);
     }
-    else // operation cancelled
+    else
     {
-        co_await ui_thread;
-        Saving_Progress().IsActive(false);
-        if (callback) callback(false);
+        SET_ERROR_MESSAGE(Msg_Text(), L"Operation cancelled.");
     }
 
     co_return;
@@ -222,54 +238,18 @@ winrt::fire_and_forget winrt::main_GUI::implementation::SavePage::export_file(wi
     {
         if (filename == save_file_name_w) // save file
         {
-            bool bErr = false;
+			auto sav_file{ co_await Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(save_file_name_w, ws::CreationCollisionOption::OpenIfExists) };
 
-            try
-            {
-                auto sav_file{ co_await Windows::Storage::ApplicationData::Current().LocalFolder().GetFileAsync(save_file_name_w) };
+			auto dest_file{ co_await folder.CreateFileAsync(save_file_name_w, ws::CreationCollisionOption::ReplaceExisting) };
+			co_await sav_file.CopyAndReplaceAsync(dest_file);
 
-                auto dest_file{ co_await folder.CreateFileAsync(save_file_name_w, ws::CreationCollisionOption::ReplaceExisting) };
-                co_await sav_file.CopyAndReplaceAsync(dest_file);
-            }
-            catch(...) // probably file does not exist
-            {
-                bErr = true;
-            }
-
-            if (bErr)
-            {
-                co_await ui_thread;
-                Saving_Progress().IsActive(false);
-                if (callback) callback(1);
-
-                co_return;
-            }
         }
         else if (filename == log_file_name_w) // log file
         {
-            bool bErr = false;
+			auto log_file{ co_await Windows::Storage::ApplicationData::Current().LocalFolder().CreateFileAsync(log_file_name_w, ws::CreationCollisionOption::OpenIfExists) };
 
-            try
-            {
-                auto log_file{ co_await Windows::Storage::ApplicationData::Current().LocalFolder().GetFileAsync(log_file_name_w) };
-
-                auto dest_file{ co_await folder.CreateFileAsync(log_file_name_w, ws::CreationCollisionOption::ReplaceExisting) };
-                co_await log_file.CopyAndReplaceAsync(dest_file);
-
-            }
-            catch (...) // probably file does not exist
-            {
-                bErr = true;
-            }
-
-            if (bErr)
-            {
-                co_await ui_thread;
-                Saving_Progress().IsActive(false);
-                if (callback) callback(1);
-
-                co_return;
-            }
+			auto dest_file{ co_await folder.CreateFileAsync(log_file_name_w, ws::CreationCollisionOption::ReplaceExisting) };
+			co_await log_file.CopyAndReplaceAsync(dest_file);
         }
         else /*do nothing*/ {}
 
@@ -285,4 +265,22 @@ winrt::fire_and_forget winrt::main_GUI::implementation::SavePage::export_file(wi
     }
 
     co_return;
+}
+
+
+void winrt::main_GUI::implementation::SavePage::ConfirmCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
+{
+    Import_Confirmation_Dialog().IsPrimaryButtonEnabled(true);
+}
+
+
+void winrt::main_GUI::implementation::SavePage::ConfirmCheckBox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
+{
+    Import_Confirmation_Dialog().IsPrimaryButtonEnabled(false);
+}
+
+
+void winrt::main_GUI::implementation::SavePage::Import_Confirmation_Dialog_Opened(winrt::Windows::UI::Xaml::Controls::ContentDialog const& sender, winrt::Windows::UI::Xaml::Controls::ContentDialogOpenedEventArgs const& args)
+{
+    ConfirmCheckBox().IsChecked(false);
 }

@@ -1,7 +1,7 @@
 \part{Implementation}
 
 \section{Program commands}
-For now the program can only be used from a console. This section defines its commands by which the user interacts with it.
+This section describes the commands the program uses in CLI.
 
 \subsection{Format}
 All commands and their options are shown in \texttt{typewriter font}. All command arguments are shown \emph{emphasized}. All options/arguments that are optional are indicated with a subscript \textsubscript{opt}.
@@ -247,6 +247,15 @@ The command \texttt{exit} exits the programs, after saving the current system to
 \begin{center}
 	\texttt{exit}
 \end{center}
+
+\section{GUI specific}
+For now the program only has a Windows UWP GUI.
+
+\subsection{Settings entries}
+\subsubsection{themeSettings}
+The entry decides which theme the program starts in.
+
+\paragraph{Value} 0: Light mode; 1: Dark mode.
 
 \section{File format}
 The sections describes the file format the program uses.

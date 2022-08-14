@@ -16,6 +16,8 @@ namespace winrt::main_GUI::implementation
         void Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
 
     private:
+        // let the user to decide if the current system will be overridden by creating a new one
+        winrt::fire_and_forget approve_creation_if_sys_loaded(double cash, double exp);
 
     public:
         void Error_Message_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);

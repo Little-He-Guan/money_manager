@@ -39,20 +39,49 @@ void winrt::main_GUI::implementation::CreateSystemPage::Button_Click(winrt::Wind
         double cash = std::stof(std::wstring(cash_str)), exp = std::stof(std::wstring(exp_str));
         if (cash >= exp && exp >= 0)
         {
-            g_mgr.sys = financial_system(cash, exp, ::cur_date);
-            g_mgr.system_loaded.store(true);
+            if (g_mgr.system_loaded) // need user approval if it's already loaded
+            {
+                approve_creation_if_sys_loaded(cash, exp);
+            }
+            else
+            {
+                g_mgr.sys = financial_system(cash, exp, ::cur_date);
+                g_mgr.system_loaded.store(true);
 
-            Error_Message().Foreground(Media::SolidColorBrush(Colors::Green()));
-            Error_Message().Text(L"System Created!");
+                SET_SUCCESS_MESSAGE(Error_Message(), L"System Created!");
+            }
         }
         else
         {
-            Error_Message().Text(L"Must have Cash >= Exp >= 0!");
+            SET_ERROR_MESSAGE(Error_Message(), L"Must have Cash >= Exp >= 0!");
         }
     }
     else
     {
-        Error_Message().Text(L"Invalid input!");
+        SET_ERROR_MESSAGE(Error_Message(), L"Invalid Input!");
+    }
+}
+
+winrt::fire_and_forget winrt::main_GUI::implementation::CreateSystemPage::approve_creation_if_sys_loaded(double cash, double exp)
+{
+    auto dialog = wuxc::ContentDialog();
+    dialog.Title(winrt::box_value(L"There is already a system."));
+    dialog.Content(winrt::box_value(L"Create a new system when one is already present will override the present one and the operation cannot be undone. Do you wish to continue?"));
+    dialog.PrimaryButtonText(L"Continue");
+    dialog.CloseButtonText(L"Cancel");
+
+    auto user_approval{ co_await dialog.ShowAsync() };
+
+    if (user_approval == wuxc::ContentDialogResult::Primary) // override the system.
+    {
+        g_mgr.sys = financial_system(cash, exp, ::cur_date);
+        g_mgr.system_loaded.store(true);
+
+        SET_SUCCESS_MESSAGE(Error_Message(), L"System overridden.");
+    }
+    else
+    {
+        SET_ERROR_MESSAGE(Error_Message(), L"Operation cancelled.");
     }
 }
 
