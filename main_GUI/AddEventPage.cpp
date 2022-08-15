@@ -111,7 +111,16 @@ void winrt::main_GUI::implementation::AddEventPage::Button_Click(winrt::Windows:
 {
     Error_Message().Text(L"");
 
-    name = winrt::to_string(Name_Input().Text());
+    if (std::regex_match(std::wstring(Name_Input().Text()), ::event_name_wregex_obj))
+    {
+        name = winrt::to_string(Name_Input().Text());
+    }
+    else
+    {
+        SET_ERROR_MESSAGE(Error_Message(), L"Name is a sequence of letters and numbers plus _.");
+        return;
+    }
+
     std::wstring input_amount(Amount_Input().Text());
     if (std::regex_match(input_amount, ::double_wregex_obj))
     {
@@ -161,10 +170,7 @@ void winrt::main_GUI::implementation::AddEventPage::Button_Click(winrt::Windows:
 
             if (Event_Type_Picker().SelectedIndex() == 2)
             {
-                if (sim.emplace_ot_proposal(name, amount, start, type))
-                {
-                }
-                else
+                if (!sim.emplace_ot_proposal(name, amount, start, type))
                 {
                     SET_ERROR_MESSAGE(Error_Message(), L"The name has already been used.");
                     return;
@@ -172,10 +178,7 @@ void winrt::main_GUI::implementation::AddEventPage::Button_Click(winrt::Windows:
             }
             else if (Event_Type_Picker().SelectedIndex() == 3)
             {
-                if (sim.emplace_p_proposal(name, amount, start, type))
-                {
-                }
-                else
+                if (!sim.emplace_p_proposal(name, amount, start, type))
                 {
                     SET_ERROR_MESSAGE(Error_Message(), L"The name has already been used.");
                     return;
@@ -188,10 +191,12 @@ void winrt::main_GUI::implementation::AddEventPage::Button_Click(winrt::Windows:
 
                 while (sim.get_date() < sim.end_date)
                 {
-                    sim.advance_one_day();
-                    sim_results.push_back({ sim.in_safe_state(), (int)sim.get_cash() });
+                    bool bSafeState = sim.in_safe_state();
 
-                    if (!sim.in_safe_state())
+                    sim_results.push_back({ bSafeState, (int)sim.get_cash() });
+                    sim.advance_one_day();
+
+                    if (!bSafeState)
                     {
                         sim.aborted = true;
                         break;

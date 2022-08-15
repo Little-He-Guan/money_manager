@@ -44,10 +44,12 @@ void winrt::main_GUI::implementation::RunSimulationPage::Button_Click(winrt::Win
     double total = 0.0;
     while (sim.get_date() < sim.end_date)
     {
-        sim.advance_one_day();
-        
         bool bSafeState = sim.in_safe_state();
+
         sim_results.push_back({ bSafeState, (int)sim.get_cash() });
+        sim.advance_one_day();
+
+        total += sim.get_cash() - sim.get_expectation();
 
         if (!bSafeState)
         {
@@ -55,7 +57,6 @@ void winrt::main_GUI::implementation::RunSimulationPage::Button_Click(winrt::Win
             break;
         }
 
-        total += sim.get_cash() - sim.get_expectation();
     }
 
     if (sim.aborted)

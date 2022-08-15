@@ -12,6 +12,7 @@ money_manager g_mgr;
 
 const std::wregex double_wregex_obj(::double_wregex);
 const std::wregex integer_wregex_obj(::integer_wregex);
+const std::wregex event_name_wregex_obj(::event_name_wregex);
 
 const std::wregex sf_second_line_wregex_obj(sf_second_line_wregex);
 const std::wregex sf_event_line_wregex_obj(sf_event_line_wregex);

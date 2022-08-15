@@ -13,6 +13,7 @@ extern std::atomic_bool save_system_completed;
 
 constexpr auto integer_wregex = L"[\\d]+";
 constexpr auto double_wregex = L"((?:[\\d]*[.])?[\\d]+)";
+constexpr auto event_name_wregex = L"[a-zA-Z0-9_]+";
 
 constexpr auto sf_second_line_wregex = L"((?:[\\d]*[.])?[\\d]+) ((?:[\\d]*[.])?[\\d]+)";
 // line of an event. we do not use the precise regex for dates here, as it will be tested in string_to_date()
@@ -20,6 +21,7 @@ constexpr auto sf_event_line_wregex = L"([\\w]+) ([\\d\\-]+) ([\\d\\-]+) ((?:[\\
 
 extern const std::wregex integer_wregex_obj;
 extern const std::wregex double_wregex_obj;
+extern const std::wregex event_name_wregex_obj;
 
 extern const std::wregex sf_second_line_wregex_obj;
 extern const std::wregex sf_event_line_wregex_obj;
