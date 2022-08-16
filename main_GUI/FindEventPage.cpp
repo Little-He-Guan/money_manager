@@ -222,13 +222,13 @@ void winrt::main_GUI::implementation::FindEventPage::Remove_Button_Click(winrt::
         switch (pe->Type())
         {
         case 0:
-            g_mgr.sys.remove_fixed_income(*(pe->p_event->name));
+            g_mgr.sys.remove_fixed_income(pe->p_event->name);
             break;
         case 1:
-            g_mgr.sys.remove_ot_proposal(*(pe->p_event->name));
+            g_mgr.sys.remove_ot_proposal(pe->p_event->name);
             break;
         case 2:
-            g_mgr.sys.remove_p_proposal(*(pe->p_event->name));
+            g_mgr.sys.remove_p_proposal(pe->p_event->name);
             break;
         }
 

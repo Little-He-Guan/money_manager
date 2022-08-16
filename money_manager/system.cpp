@@ -238,11 +238,11 @@ void financial_system::record_event(event_type type, const void* p_event, double
 			const auto& e = *reinterpret_cast<const financial_event*>(p_event);
 			if (type == financial_system::event_type::fixed_income) // for incomes it's +
 			{
-				lf << type_str << *e.name << " at " << current_date.to_string() << " +" << amount << std::endl;
+				lf << type_str << e.name << " at " << current_date.to_string() << " +" << amount << std::endl;
 			}
 			else // for proposals it's -
 			{
-				lf << type_str << *e.name << " at " << current_date.to_string() << " -" << amount << std::endl;
+				lf << type_str << e.name << " at " << current_date.to_string() << " -" << amount << std::endl;
 			}
 		}
 

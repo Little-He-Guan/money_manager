@@ -5,7 +5,7 @@
 std::string financial_event::to_string() const
 {
 	return std::string(
-		"Name: " + *name + 
+		"Name: " + name + 
 		"\n\t Start: " + start.to_string() + " End: " + end.to_string() +
 		"\n\t Amount: " + std::to_string(amount));
 }

@@ -23,18 +23,18 @@ public:
 	// must provide sufficient info
 	financial_event() = delete;
 	financial_event(double a, date s, effective_duration t, const std::string& n):
-		name(&n), amount(a), start(s), type(t)
+		name(n), amount(a), start(s), type(t)
 	{
 		actual = amount;
 		calculate_end();
 	}
 	financial_event(double a, date s, date e, effective_duration t, const std::string& n) :
-		name(&n), amount(a), start(s), end(e), type(t) 
+		name(n), amount(a), start(s), end(e), type(t) 
 	{
 		actual = amount;
 	}
 	financial_event(double a, double ac, date s, date e, effective_duration t, const std::string& n) :
-		name(&n), amount(a), start(s), end(e), type(t), actual(ac) {}
+		name(n), amount(a), start(s), end(e), type(t), actual(ac) {}
 
 	// although no two events of the same kind should have the same name in A SYSTEM,
 	// we may need to copy a system's state to run a simulation.
@@ -84,7 +84,8 @@ public:
 	static date calculate_end(date start, effective_duration type);
 
 public:
-	const std::string* name = nullptr;
+	// do not use a reference or a pointer to the map's key. It is not guaranteed to be stable!
+	std::string name;
 
 	// effective duration is [start, end)
 	date start, end;

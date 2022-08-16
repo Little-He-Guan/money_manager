@@ -1,5 +1,5 @@
-MainPackage=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.3.0_x64.msix
-ResourcePack=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.3.0_scale-100.msix
-ResourcePack=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.3.0_scale-125.msix
-ResourcePack=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.3.0_scale-150.msix
-ResourcePack=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.3.0_scale-400.msix
+MainPackage=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.4.0_x64.msix
+ResourcePack=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.4.0_scale-100.msix
+ResourcePack=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.4.0_scale-125.msix
+ResourcePack=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.4.0_scale-150.msix
+ResourcePack=C:\Users\Guany\Documents\Visual Studio 2022\Projects\money_manager\x64\Release\main_GUI\main_GUI_2.0.4.0_scale-400.msix

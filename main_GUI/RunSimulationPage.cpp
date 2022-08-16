@@ -47,9 +47,9 @@ void winrt::main_GUI::implementation::RunSimulationPage::Button_Click(winrt::Win
         bool bSafeState = sim.in_safe_state();
 
         sim_results.push_back({ bSafeState, (int)sim.get_cash() });
-        sim.advance_one_day();
-
         total += sim.get_cash() - sim.get_expectation();
+
+        sim.advance_one_day();
 
         if (!bSafeState)
         {

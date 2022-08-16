@@ -246,19 +246,19 @@ void money_manager::save_back_to_file(std::string path)
 		sf << sys.get_ot_proposals().size() << std::endl;
 		for (const auto& [n, e] : sys.get_ot_proposals())
 		{
-			sf << *e.name << " " << e.start.to_string() << " " << e.end.to_string() << " " << std::to_string(e.amount) << " " << std::to_string(e.actual) << " " << (int)e.type << std::endl;
+			sf << e.name << " " << e.start.to_string() << " " << e.end.to_string() << " " << std::to_string(e.amount) << " " << std::to_string(e.actual) << " " << (int)e.type << std::endl;
 		}
 
 		sf << sys.get_p_proposals().size() << std::endl;
 		for (const auto& [n, e] : sys.get_p_proposals())
 		{
-			sf << *e.name << " " << e.start.to_string() << " " << e.end.to_string() << " " << std::to_string(e.amount) << " " << std::to_string(e.actual) << " " << (int)e.type << std::endl;
+			sf << e.name << " " << e.start.to_string() << " " << e.end.to_string() << " " << std::to_string(e.amount) << " " << std::to_string(e.actual) << " " << (int)e.type << std::endl;
 		}
 
 		sf << sys.get_fixed_incomes().size() << std::endl;
 		for (const auto& [n, e] : sys.get_fixed_incomes())
 		{
-			sf << *e.name << " " << e.start.to_string() << " " << e.end.to_string() << " " << std::to_string(e.amount) << " " << std::to_string(e.actual) << " " << (int)e.type << std::endl;
+			sf << e.name << " " << e.start.to_string() << " " << e.end.to_string() << " " << std::to_string(e.amount) << " " << std::to_string(e.actual) << " " << (int)e.type << std::endl;
 		}
 
 		sf.close();

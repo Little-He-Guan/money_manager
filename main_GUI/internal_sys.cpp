@@ -99,19 +99,19 @@ winrt::fire_and_forget save_system_back_to_file_UWP(std::function<void()> call_b
         lines.Append(winrt::to_hstring(g_mgr.sys.get_ot_proposals().size()));
         for (const auto& [n, e] : g_mgr.sys.get_ot_proposals())
         {
-            lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
+            lines.Append(winrt::to_hstring(e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
         }
 
         lines.Append(winrt::to_hstring(g_mgr.sys.get_p_proposals().size()));
         for (const auto& [n, e] : g_mgr.sys.get_p_proposals())
         {
-            lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
+            lines.Append(winrt::to_hstring(e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
         }
 
         lines.Append(winrt::to_hstring(g_mgr.sys.get_fixed_incomes().size()));
         for (const auto& [n, e] : g_mgr.sys.get_fixed_incomes())
         {
-            lines.Append(winrt::to_hstring(*e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
+            lines.Append(winrt::to_hstring(e.name) + L" " + winrt::to_hstring(e.start.to_string()) + L" " + winrt::to_hstring(e.end.to_string()) + L" " + winrt::to_hstring(e.amount) + L" " + winrt::to_hstring(e.actual) + L" " + winrt::to_hstring((int)e.type));
         }
 
         co_await ws::FileIO::WriteLinesAsync(sav_file, lines);
@@ -331,11 +331,11 @@ my_fire_and_forget record_event_UWP(financial_system::event_type type, const voi
 		const auto& e = *reinterpret_cast<const financial_event*>(p_event);
 		if (type == financial_system::event_type::fixed_income) // for incomes it's +
 		{
-            lines.Append(type_str + winrt::to_hstring(*e.name) + L" at " + winrt::to_hstring(cur_date.to_string()) + L" +" + winrt::to_hstring(amount));
+            lines.Append(type_str + winrt::to_hstring(e.name) + L" at " + winrt::to_hstring(cur_date.to_string()) + L" +" + winrt::to_hstring(amount));
 		}
 		else // for proposals it's -
 		{
-            lines.Append(type_str + winrt::to_hstring(*e.name) + L" at " + winrt::to_hstring(cur_date.to_string()) + L" -" + winrt::to_hstring(amount));
+            lines.Append(type_str + winrt::to_hstring(e.name) + L" at " + winrt::to_hstring(cur_date.to_string()) + L" -" + winrt::to_hstring(amount));
 		}
 	}
 

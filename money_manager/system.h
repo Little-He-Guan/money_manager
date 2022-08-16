@@ -67,10 +67,6 @@ public:
 	bool emplace_ot_proposal(const std::string& name, Args&&... args)
 	{
 		auto p = ot_proposals.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(args..., name));
-		if (p.second) // reassign name
-		{
-			p.first->second.name = &p.first->first;
-		}
 		return p.second;
 	}
 	// constructs a periodic proposal in-place with the name and the args
@@ -79,10 +75,6 @@ public:
 	bool emplace_p_proposal(const std::string& name, Args&&... args)
 	{
 		auto p = p_proposals.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(args..., name));
-		if (p.second) // reassign name
-		{
-			p.first->second.name = &p.first->first;
-		}
 		return p.second;
 	}
 	// constructs a fixed income in-place with the name and the args
@@ -91,10 +83,6 @@ public:
 	bool emplace_fixed_income(const std::string& name, Args&&... args)
 	{
 		auto p = incomes.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(args..., name));
-		if (p.second) // reassign name
-		{
-			p.first->second.name = &p.first->first;
-		}
 		return p.second;
 	}
 

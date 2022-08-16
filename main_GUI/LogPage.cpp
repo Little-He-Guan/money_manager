@@ -35,7 +35,7 @@ namespace winrt::main_GUI::implementation
         // capture calling thread context.
         winrt::apartment_context ui_thread;
         // get strong this so it will not expire
-        auto strong_this = get_strong();
+        auto weak_this = get_weak();
         // and switch to a background thread
         co_await winrt::resume_background();
 
@@ -46,13 +46,16 @@ namespace winrt::main_GUI::implementation
         // switch back to UI thread
         co_await ui_thread;
 
-        auto size = strong_this->Log_View().Items().Size();
-
-        if (size == 0)
+        if (auto strong_this{ weak_this.get() })
         {
-            for (const auto& line : log_lines)
+            auto size = strong_this->Log_View().Items().Size();
+
+            if (size == 0)
             {
-                strong_this->Log_View().Items().Append(main_GUI::LogView(line));
+                for (const auto& line : log_lines)
+                {
+                    strong_this->Log_View().Items().Append(main_GUI::LogView(line));
+                }
             }
         }
     }

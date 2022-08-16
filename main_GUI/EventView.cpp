@@ -28,7 +28,7 @@ namespace winrt::main_GUI::implementation
 			name = L"Event ";
 			break;
 		}
-		name = name + winrt::to_hstring(*e.name);
+		name = name + winrt::to_hstring(e.name);
 		amount = winrt::to_hstring(t == 0 ? L"+ " : L"- ") + winrt::to_hstring(e.amount) + L" (" + winrt::to_hstring(e.actual) + L")";
 		type = t;
 

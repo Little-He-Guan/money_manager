@@ -34,10 +34,13 @@ namespace winrt::main_GUI::implementation
     {
         if (g_mgr.system_loaded)
         {
-            auto update_save_state = [this, strong_this{ get_strong() } /*Capture a strong this to keep this valid*/]() -> void
+            auto update_save_state = [weak_this{ get_weak() }]() -> void
             {
-                SET_SUCCESS_MESSAGE(Msg_Text(), L"Successfully saved the system");
-                Saving_Progress().IsActive(false);
+                if (auto strong_this{ weak_this.get() })
+                {
+                    SET_SUCCESS_MESSAGE(strong_this->Msg_Text(), L"Successfully saved the system");
+                    strong_this->Saving_Progress().IsActive(false);
+                }
             };
 
             SET_NORMAL_MESSAGE(Msg_Text(), L"Please wait...");
@@ -53,20 +56,24 @@ namespace winrt::main_GUI::implementation
 
 void winrt::main_GUI::implementation::SavePage::MenuFlyoutItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    auto callback = [this, strong_this{ get_strong() }](int res) ->void
+    auto callback = [weak_this{ get_weak() }](int res) ->void
     {
-        switch (res)
+        if (auto strong_this{ weak_this.get() })
         {
-        case 0:
-            SET_SUCCESS_MESSAGE(Msg_Text(), L"Successfully exported save file to the destination folder.");
-            break;
-        case 1:
-            SET_ERROR_MESSAGE(Msg_Text(), L"The save file does not exist.");
-            break;
-        case 2:
-            SET_ERROR_MESSAGE(Msg_Text(), L"Operation cancelled.");
-            break;
+            switch (res)
+            {
+            case 0:
+                SET_SUCCESS_MESSAGE(strong_this->Msg_Text(), L"Successfully exported save file to the destination folder.");
+                break;
+            case 1:
+                SET_ERROR_MESSAGE(strong_this->Msg_Text(), L"The save file does not exist.");
+                break;
+            case 2:
+                SET_ERROR_MESSAGE(strong_this->Msg_Text(), L"Operation cancelled.");
+                break;
+            }
         }
+
     };
 
     export_file(save_file_name_w, callback);
@@ -75,19 +82,22 @@ void winrt::main_GUI::implementation::SavePage::MenuFlyoutItem_Click(winrt::Wind
 
 void winrt::main_GUI::implementation::SavePage::MenuFlyoutItem_Click_1(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    auto callback = [this, strong_this{ get_strong() }](int res) ->void
+    auto callback = [weak_this{ get_weak() }](int res) ->void
     {
-        switch (res)
+        if (auto strong_this{ weak_this.get() })
         {
-        case 0:
-            SET_SUCCESS_MESSAGE(Msg_Text(), L"Successfully exported the log file to the destination folder.");
-            break;
-        case 1:
-            SET_ERROR_MESSAGE(Msg_Text(), L"The log file does not exist.");
-            break;
-        case 2:
-            SET_ERROR_MESSAGE(Msg_Text(), L"Operation cancelled.");
-            break;
+            switch (res)
+            {
+            case 0:
+                SET_SUCCESS_MESSAGE(strong_this->Msg_Text(), L"Successfully exported the log file to the destination folder.");
+                break;
+            case 1:
+                SET_ERROR_MESSAGE(strong_this->Msg_Text(), L"The log file does not exist.");
+                break;
+            case 2:
+                SET_ERROR_MESSAGE(strong_this->Msg_Text(), L"Operation cancelled.");
+                break;
+            }
         }
     };
 
@@ -97,15 +107,18 @@ void winrt::main_GUI::implementation::SavePage::MenuFlyoutItem_Click_1(winrt::Wi
 
 void winrt::main_GUI::implementation::SavePage::MenuFlyoutItem_Click_2(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    auto callback = [this, strong_this{ get_strong() }](bool res) ->void
+    auto callback = [weak_this{ get_weak() }](bool res) ->void
     {
-        if (res)
+        if (auto strong_this{ weak_this.get() })
         {
-            SET_SUCCESS_MESSAGE(Msg_Text(), L"Successfully imported the save file and reloaded the system.");
-        }
-        else
-        {
-            SET_ERROR_MESSAGE(Msg_Text(), L"The operation was cancelled or the file you selected is an invalid save file.");
+            if (res)
+            {
+                SET_SUCCESS_MESSAGE(strong_this->Msg_Text(), L"Successfully imported the save file and reloaded the system.");
+            }
+            else
+            {
+                SET_ERROR_MESSAGE(strong_this->Msg_Text(), L"The operation was cancelled or the file you selected is an invalid save file.");
+            }
         }
     };
 
@@ -115,15 +128,18 @@ void winrt::main_GUI::implementation::SavePage::MenuFlyoutItem_Click_2(winrt::Wi
 
 void winrt::main_GUI::implementation::SavePage::MenuFlyoutItem_Click_3(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    auto callback = [this, strong_this{ get_strong() }](bool res) ->void
+    auto callback = [weak_this{ get_weak() }](bool res) ->void
     {
-        if (res)
+        if (auto strong_this{ weak_this.get() })
         {
-            SET_SUCCESS_MESSAGE(Msg_Text(), L"Successfully imported the log file.");
-        }
-        else
-        {
-            SET_ERROR_MESSAGE(Msg_Text(), L"Operation cancelled.");
+            if (res)
+            {
+                SET_SUCCESS_MESSAGE(strong_this->Msg_Text(), L"Successfully imported the log file.");
+            }
+            else
+            {
+                SET_ERROR_MESSAGE(strong_this->Msg_Text(), L"Operation cancelled.");
+            }
         }
     };
 

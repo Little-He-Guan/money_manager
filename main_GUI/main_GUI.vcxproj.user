@@ -11,7 +11,7 @@
     <PackageLogoSource>E:\VS Project\money_manager\main_GUI\Assets\icon.png</PackageLogoSource>
     <UapAppxPackageBuildMode>StoreAndSideload</UapAppxPackageBuildMode>
     <AppxShowAllApps>True</AppxShowAllApps>
-    <AppxBuildConfigurationSelection>x86|x64</AppxBuildConfigurationSelection>
+    <AppxBuildConfigurationSelection>x64</AppxBuildConfigurationSelection>
     <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
   </PropertyGroup>
 </Project>
