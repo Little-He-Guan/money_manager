@@ -36,7 +36,6 @@ void winrt::main_GUI::implementation::MainPage::Main_Menu_Loaded(winrt::Windows:
     if (winrt::unbox_value<int>(settings.Lookup(first_launch_entry)) == 1)
     {
         FirstUseTip1().IsOpen(true);
-        settings.Insert(first_launch_entry, winrt::box_value(0));
     }
     else
     {
@@ -173,6 +172,11 @@ void winrt::main_GUI::implementation::MainPage::FirstUseTip1_ActionButtonClick(w
 {
     // go to help page
     ContentFrame().Navigate(winrt::xaml_typename<main_GUI::HelpPage>());
+    // no longer first use
+    {
+        auto settings = ws::ApplicationData::Current().LocalSettings().Values();
+        settings.Insert(first_launch_entry, winrt::box_value(0));
+    }
     // close the teaching tip
     FirstUseTip1().IsOpen(false);
 }

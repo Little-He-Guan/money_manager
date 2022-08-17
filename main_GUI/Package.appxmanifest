@@ -3,7 +3,7 @@
   <Identity
     Name="60833GuanyumingHe.tinymoneymanager"
     Publisher="CN=6B398F02-CA2C-415A-B589-6F19755ADFCA"
-    Version="2.0.4.0" />
+    Version="2.0.5.0" />
   <mp:PhoneIdentity PhoneProductId="2ed522fd-f2ae-485e-bcd0-fee2f977fbd1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
   <Properties>
     <DisplayName>tiny money manager</DisplayName>
