@@ -25,7 +25,7 @@ DEFINE_TEST_CASE(test_system_add)
 			"expected to add successfully")
 		auto p = sys.find_ot_proposal("222");
 		ASSERT_TRUE(nullptr != p, "expected to have that added")
-		ASSERT_EQUALS("222", *p->name, "expected to add the one we wanted to add")
+		ASSERT_EQUALS("222", p->name, "expected to add the one we wanted to add")
 
 		// adding with a name already used
 		ASSERT_FALSE(sys.emplace_ot_proposal(std::string("111"), 100.0, date(2022, 2, 2), financial_event::daily),
@@ -44,7 +44,7 @@ DEFINE_TEST_CASE(test_system_add)
 			"expected to add successfully")
 		auto p = sys.find_p_proposal("222");
 		ASSERT_TRUE(nullptr != p, "expected to have that added")
-		ASSERT_EQUALS("222", *p->name, "expected to add the one we wanted to add")
+		ASSERT_EQUALS("222", p->name, "expected to add the one we wanted to add")
 
 		// adding with a name already used
 		ASSERT_FALSE(sys.emplace_p_proposal(std::string("111"), 100.0, date(2022, 2, 2), financial_event::daily),
@@ -63,7 +63,7 @@ DEFINE_TEST_CASE(test_system_add)
 			"expected to add successfully")
 		auto p = sys.find_fixed_income("222");
 		ASSERT_TRUE(nullptr != p, "expected to have that added")
-		ASSERT_EQUALS("222", *p->name, "expected to add the one we wanted to add")
+		ASSERT_EQUALS("222", p->name, "expected to add the one we wanted to add")
 
 		// adding with a name already used
 		ASSERT_FALSE(sys.emplace_fixed_income(std::string("111"), 100.0, date(2022, 2, 2), financial_event::daily),

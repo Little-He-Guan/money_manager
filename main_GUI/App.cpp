@@ -25,9 +25,9 @@ App::App()
     InitializeComponent();
     Suspending({ this, &App::OnSuspending });
 
+    auto settings = ws::ApplicationData::Current().LocalSettings().Values();
     // set app theme (can only be set now (at start time))
     {
-        auto settings = ws::ApplicationData::Current().LocalSettings().Values();
         if (settings.HasKey(theme_settings_entry)) // has previous settings
         {
             Application::Current().RequestedTheme((bool)winrt::unbox_value<int>(settings.Lookup(theme_settings_entry)) ? ApplicationTheme::Dark : ApplicationTheme::Light);
@@ -37,6 +37,17 @@ App::App()
             Application::Current().RequestedTheme(ApplicationTheme::Light);
             // create the settings entry
             settings.Insert(theme_settings_entry, winrt::box_value(0));
+        }
+    }
+    // set first launch value
+    {
+        if (settings.HasKey(first_launch_entry)) 
+        {
+            // do nothing
+        }
+        else // set it 
+        {
+            settings.Insert(first_launch_entry, winrt::box_value(1));
         }
     }
 

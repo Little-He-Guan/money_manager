@@ -4,6 +4,7 @@ namespace main_GUI
     runtimeclass MainPage : Windows.UI.Xaml.Controls.Page
     {
         MainPage();
-        Int32 MyProperty;
+    // must be declared for WinUI controls to reference it 
+        Microsoft.UI.Xaml.Controls.NavigationViewItem HelpItem;
     }
 }

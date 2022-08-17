@@ -5,9 +5,6 @@
 #include "date_convertion.h"
 #include "internal_sys.h"
 
-#include <winrt/Windows.ApplicationModel.h>
-#include <winrt/Windows.Storage.h>
-
 namespace winrt::main_GUI::implementation
 {
     MainPage::MainPage()
@@ -24,19 +21,7 @@ namespace winrt::main_GUI::implementation
         m_pages.emplace_back(std::piecewise_construct, std::forward_as_tuple(L"Log_Page"), std::forward_as_tuple(winrt::xaml_typename<main_GUI::LogPage>()));
     }
 
-
-    int32_t MainPage::MyProperty()
-    {
-        throw hresult_not_implemented();
-    }
-
-    void MainPage::MyProperty(int32_t /* value */)
-    {
-        throw hresult_not_implemented();
-    }
 }
-
-namespace wuxc = winrt::Windows::UI::Xaml::Controls;
 
 void winrt::main_GUI::implementation::MainPage::Main_Menu_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
@@ -45,10 +30,22 @@ void winrt::main_GUI::implementation::MainPage::Main_Menu_Loaded(winrt::Windows:
 
     // go to state page
     ContentFrame().Navigate(Windows::UI::Xaml::Interop::TypeName(winrt::xaml_typename<main_GUI::StatePage>()));
+
+    // if it's first launch, open the teaching tip.
+    auto settings = ws::ApplicationData::Current().LocalSettings().Values();
+    if (winrt::unbox_value<int>(settings.Lookup(first_launch_entry)) == 1)
+    {
+        FirstUseTip1().IsOpen(true);
+        settings.Insert(first_launch_entry, winrt::box_value(0));
+    }
+    else
+    {
+        FirstUseTip1().IsOpen(false);
+    }
 }
 
 
-void winrt::main_GUI::implementation::MainPage::Main_Menu_SelectionChanged(winrt::Windows::UI::Xaml::Controls::NavigationView const& sender, winrt::Windows::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
+void winrt::main_GUI::implementation::MainPage::Main_Menu_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, muxc::NavigationViewSelectionChangedEventArgs const& args)
 {
     if (args.IsSettingsSelected())
     {
@@ -63,7 +60,7 @@ void winrt::main_GUI::implementation::MainPage::Main_Menu_SelectionChanged(winrt
 }
 
 
-void winrt::main_GUI::implementation::MainPage::Main_Menu_BackRequested(winrt::Windows::UI::Xaml::Controls::NavigationView const& sender, winrt::Windows::UI::Xaml::Controls::NavigationViewBackRequestedEventArgs const& args)
+void winrt::main_GUI::implementation::MainPage::Main_Menu_BackRequested(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, muxc::NavigationViewBackRequestedEventArgs const& args)
 {
     TryGoBack();
 }
@@ -84,8 +81,13 @@ void winrt::main_GUI::implementation::MainPage::On_Navigated(Windows::Foundation
         winrt::xaml_typename<main_GUI::SettingsPage>().Name)
     {
         // SettingsItem is not part of NavView.MenuItems, and doesn't have a Tag.
-        Main_Menu().SelectedItem(Main_Menu().SettingsItem().as<wuxc::NavigationViewItem>());
+        Main_Menu().SelectedItem(Main_Menu().SettingsItem().as<muxc::NavigationViewItem>());
         Main_Menu().Header(winrt::box_value(L"Settings"));
+    }
+    else if (ContentFrame().SourcePageType().Name == winrt::xaml_typename<main_GUI::HelpPage>().Name)
+    {
+		Main_Menu().SelectedItem(HelpItem());
+		Main_Menu().Header(HelpItem().Content());
     }
     else if (ContentFrame().SourcePageType().Name != L"")
     {
@@ -96,7 +98,7 @@ void winrt::main_GUI::implementation::MainPage::On_Navigated(Windows::Foundation
                 for (auto&& eachMenuItem : Main_Menu().MenuItems())
                 {
                     auto navigationViewItem =
-                        eachMenuItem.try_as<wuxc::NavigationViewItem>();
+                        eachMenuItem.try_as<muxc::NavigationViewItem>();
                     {
                         if (navigationViewItem)
                         {
@@ -151,11 +153,26 @@ bool winrt::main_GUI::implementation::MainPage::TryGoBack()
     {
         return false;
     }
-    else if (Main_Menu().IsPaneOpen() && (Main_Menu().DisplayMode() == wuxc::NavigationViewDisplayMode::Compact || Main_Menu().DisplayMode() == wuxc::NavigationViewDisplayMode::Minimal)) // Don't go back if the nav pane is overlayed.
+    else if (Main_Menu().IsPaneOpen() && (Main_Menu().DisplayMode() == muxc::NavigationViewDisplayMode::Compact || Main_Menu().DisplayMode() == muxc::NavigationViewDisplayMode::Minimal)) // Don't go back if the nav pane is overlayed.
     {
         return false;
     }
 
     ContentFrame().GoBack();
     return true;
+}
+
+
+void winrt::main_GUI::implementation::MainPage::NavigationViewItem_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+{
+    ContentFrame().Navigate(winrt::xaml_typename<main_GUI::HelpPage>());
+}
+
+
+void winrt::main_GUI::implementation::MainPage::FirstUseTip1_ActionButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args)
+{
+    // go to help page
+    ContentFrame().Navigate(winrt::xaml_typename<main_GUI::HelpPage>());
+    // close the teaching tip
+    FirstUseTip1().IsOpen(false);
 }

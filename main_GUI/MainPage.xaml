@@ -5,27 +5,43 @@
     xmlns:local="using:main_GUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d">
 
-    <NavigationView x:Name="Main_Menu"
+    <Grid>
+        <muxc:NavigationView x:Name="Main_Menu"
+                    PaneTitle="Welcome"
                     Loaded="Main_Menu_Loaded"
-                    SelectionChanged="Main_Menu_SelectionChanged"               
+                    SelectionChanged="Main_Menu_SelectionChanged" 
                     BackRequested="Main_Menu_BackRequested"
                     IsBackEnabled="True">
-        <NavigationView.MenuItems>
-            <NavigationViewItem Icon="Emoji2" Content="Current State" Tag="State_Page"/>
-            <NavigationViewItem Icon="NewFolder" Content="Create a New System" Tag="Create_System_Page" />
-            <NavigationViewItem Icon="Save" Content="Save to File" Tag="Save_Page"/>
-            <NavigationViewItem Icon="Add" Content="Add an Event" Tag="Add_Event_Page"/>
-            <NavigationViewItem Icon="Manage" Content="Manage Events" Tag="Find_Event_Page"/>
-            <NavigationViewItem Icon="Play" Content="Run Simulation" Tag="Run_Sim_Page"/>
-            <NavigationViewItem Icon="Library" Content="Check Log" Tag="Log_Page"/>
-        </NavigationView.MenuItems>
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Icon="Emoji2" Content="Current State" Tag="State_Page"/>
+                <muxc:NavigationViewItem Icon="NewFolder" Content="Create a New System" Tag="Create_System_Page" />
+                <muxc:NavigationViewItem Icon="Save" Content="Save to File" Tag="Save_Page"/>
+                <muxc:NavigationViewItem Icon="Add" Content="Add an Event" Tag="Add_Event_Page"/>
+                <muxc:NavigationViewItem Icon="Manage" Content="Manage Events" Tag="Find_Event_Page"/>
+                <muxc:NavigationViewItem Icon="Play" Content="Run Simulation" Tag="Run_Sim_Page"/>
+                <muxc:NavigationViewItem Icon="Library" Content="Check Log" Tag="Log_Page"/>
+            </muxc:NavigationView.MenuItems>
+            <muxc:NavigationView.PaneFooter>
+                <muxc:NavigationViewItem x:Name="HelpItem" Icon="Help" Content="Help" Tag="Help_Page" Tapped="NavigationViewItem_Tapped"/>
+            </muxc:NavigationView.PaneFooter>
 
-        <Frame x:Name="ContentFrame"
+            <Frame x:Name="ContentFrame"
                Padding="12,0,12,24">
-
-        </Frame>
-    </NavigationView>
-
+            </Frame>
+        </muxc:NavigationView>
+        <muxc:TeachingTip 
+                        x:Name="FirstUseTip1"
+	                    Title="Read User Manual"
+                IsOpen="True"
+	                    Subtitle="Is this the first time you use this app? Read the app manual here!"
+	                    Target="{x:Bind HelpItem}"
+	                    IsLightDismissEnabled="False"
+	                    ActionButtonClick="FirstUseTip1_ActionButtonClick"
+	                    ActionButtonContent="Read now"
+	                    CloseButtonContent="Got it!">
+        </muxc:TeachingTip>
+    </Grid>
 </Page>

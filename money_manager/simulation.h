@@ -25,6 +25,9 @@ private:
 	void record_event(event_type type, const void* p_event, double ai_amount) override {}
 
 public:
+	std::vector<std::pair<bool, int>> sim_results;
+
+public:
 	// the date until (not including) which the simulation will be done 
 	date end_date;
 

@@ -36,38 +36,19 @@ void winrt::main_GUI::implementation::RunSimulationPage::Button_Click(winrt::Win
         sim = simulation(g_mgr.sys, cur_date);
     }
 
-    sim_results.clear();
-
     int duration = static_cast<int>(Dur_Slider_Input().Value());
     sim.end_date = sim.get_date() + duration;
 
-    double total = 0.0;
-    while (sim.get_date() < sim.end_date)
-    {
-        bool bSafeState = sim.in_safe_state();
-
-        sim_results.push_back({ bSafeState, (int)sim.get_cash() });
-        total += sim.get_cash() - sim.get_expectation();
-
-        sim.advance_one_day();
-
-        if (!bSafeState)
-        {
-            sim.aborted = true;
-            break;
-        }
-
-    }
+    sim.start_simulation();
 
     if (sim.aborted)
     {
-        SET_ERROR_MESSAGE(Sim_Res_Txt(), winrt::hstring(L"The system would not be in a safe state at ") + winrt::to_hstring(sim.get_date().to_string()));
+        SET_ERROR_MESSAGE(Sim_Res_Txt(), winrt::hstring(L"The system would not be in a safe state at ") + winrt::to_hstring(sim.aborted_date.to_string()));
     }
     else
     {
-        total /= (double)(sim.get_date() - cur_date);
         SET_SUCCESS_MESSAGE(Sim_Res_Txt(), 
-            winrt::hstring(L"The simulation does not find any danger. And the money you can use averagely (each day) during the simulation duration is ") + winrt::to_hstring(total));
+            winrt::hstring(L"The simulation does not find any danger. And the money you can use averagely (each day) during the simulation duration is ") + winrt::to_hstring(sim.sim_avg_amount));
     }
 
     // update the calendar
@@ -113,11 +94,11 @@ void winrt::main_GUI::implementation::RunSimulationPage::CalendarView_CalendarVi
     {
         auto diff = DateTime_to_date(args.Item().Date()) - cur_date;
         auto t = find_the_text_block(args);
-        if (diff >= 0 && diff < sim_results.size()) // the day is in the simulation
+        if (diff >= 0 && diff < sim.sim_results.size()) // the day is in the simulation
         {
             args.Item().IsBlackout(false);
-            t.Text(t.Text() + L"\nmoney\n" + std::to_wstring(sim_results[diff].second));
-            args.Item().SetDensityColors({sim_results[diff].first ? wu::Colors::Green() : wu::Colors::Red()});
+            t.Text(t.Text() + L"\nmoney\n" + std::to_wstring(sim.sim_results[diff].second));
+            args.Item().SetDensityColors({ sim.sim_results[diff].first ? wu::Colors::Green() : wu::Colors::Red()});
         }
         else
         {
@@ -132,14 +113,7 @@ void winrt::main_GUI::implementation::RunSimulationPage::Page_Loaded(winrt::Wind
     Dur_Slider_Input().Value(g_mgr.default_simulation_duration);
 }
 
-void winrt::main_GUI::implementation::RunSimulationPage::Dur_Txt_Input_KeyDown(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Input::KeyRoutedEventArgs const& e)
+void winrt::main_GUI::implementation::RunSimulationPage::Dur_Txt_Input_Value_Changed(winrt::Windows::Foundation::IInspectable const& sender, muxc::NumberBoxValueChangedEventArgs const& e)
 {
-    if (e.Key() == Windows::System::VirtualKey::Enter) // only when enter is pressed do we try to sync the value
-    {
-        std::wstring val_str(Dur_Txt_Input().Text());
-        if (std::regex_match(val_str, integer_wregex_obj))
-        {
-            Dur_Slider_Input().Value(std::stoi(val_str));
-        }
-    }
+    Dur_Slider_Input().Value(Dur_Txt_Input().Value());
 }

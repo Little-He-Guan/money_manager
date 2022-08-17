@@ -126,8 +126,8 @@ void winrt::main_GUI::implementation::FindEventPage::update_event_data()
 
         if (pe)
         {
-            Amount_Input().Text(winrt::to_hstring(pe->p_event->amount));
-            Actual_Input().Text(winrt::to_hstring(pe->p_event->actual));
+            Amount_Input().Value(pe->p_event->amount);
+            Actual_Input().Value(pe->p_event->actual);
 
             if (pe->p_event->end == cur_date + 1)
             {
@@ -142,8 +142,8 @@ void winrt::main_GUI::implementation::FindEventPage::update_event_data()
         }
         else 
         {
-            Amount_Input().Text(L"Select an event to view");
-            Actual_Input().Text(L"Select an event to view");
+            Amount_Input().PlaceholderText(L"Select an event to view");
+            Actual_Input().PlaceholderText(L"Select an event to view");
             Amount_Button().IsEnabled(false);
             Actual_Button().IsEnabled(false);
             Remove_Button().IsEnabled(false);
@@ -166,19 +166,16 @@ void winrt::main_GUI::implementation::FindEventPage::Event_List_SelectionChanged
 
 void winrt::main_GUI::implementation::FindEventPage::Amount_Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    if (std::regex_match(std::wstring(Amount_Input().Text()), double_wregex_obj))
-    {
-        double a = std::stof(std::wstring(Amount_Input().Text()));
+    double a = Amount_Input().Value();
 
-        if (a > 0.0)
-        {
-            main_GUI::implementation::EventView* pe = winrt::get_self<main_GUI::implementation::EventView>(Event_List().SelectedItem().as<main_GUI::EventView>());
-            if (pe) pe->p_event->amount = a;
-        }
+	if (a > 0.0)
+	{
+		main_GUI::implementation::EventView* pe = winrt::get_self<main_GUI::implementation::EventView>(Event_List().SelectedItem().as<main_GUI::EventView>());
+		if (pe) pe->p_event->amount = a;
+	}
 
-        update_event_list();
-        update_event_data();
-    }
+	update_event_list();
+	update_event_data();
 }
 
 
@@ -190,19 +187,16 @@ void winrt::main_GUI::implementation::FindEventPage::Search_Bar_TextChanged(winr
 
 void winrt::main_GUI::implementation::FindEventPage::Actual_Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    if (std::regex_match(std::wstring(Actual_Input().Text()), double_wregex_obj))
-    {
-        double a = std::stof(std::wstring(Actual_Input().Text()));
+    double a = Actual_Input().Value();
 
-        if (a > 0.0)
-        {
-            main_GUI::implementation::EventView* pe = winrt::get_self<main_GUI::implementation::EventView>(Event_List().SelectedItem().as<main_GUI::EventView>());
-            if(pe) pe->p_event->actual = a;
-        }
+	if (a > 0.0)
+	{
+		main_GUI::implementation::EventView* pe = winrt::get_self<main_GUI::implementation::EventView>(Event_List().SelectedItem().as<main_GUI::EventView>());
+		if (pe) pe->p_event->actual = a;
+	}
 
-        update_event_list();
-        update_event_data();
-    }
+	update_event_list();
+	update_event_data();
 }
 
 

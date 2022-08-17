@@ -32,34 +32,26 @@ namespace winrt::main_GUI::implementation
 
 void winrt::main_GUI::implementation::CreateSystemPage::Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
 {
-    auto cash_str = Cash_Input().Text(), exp_str = Expectation_Input().Text();
+    double cash = Cash_Input().Value(), exp = Expectation_Input().Value();
 
-    if (std::regex_match(std::wstring(cash_str), ::double_wregex_obj) && std::regex_match(std::wstring(exp_str), ::double_wregex_obj)) // correct input
-    {
-        double cash = std::stof(std::wstring(cash_str)), exp = std::stof(std::wstring(exp_str));
-        if (cash >= exp && exp >= 0)
-        {
-            if (g_mgr.system_loaded) // need user approval if it's already loaded
-            {
-                approve_creation_if_sys_loaded(cash, exp);
-            }
-            else
-            {
-                g_mgr.sys = financial_system(cash, exp, ::cur_date);
-                g_mgr.system_loaded.store(true);
+	if (cash >= exp && exp >= 0)
+	{
+		if (g_mgr.system_loaded) // need user approval if it's already loaded
+		{
+			approve_creation_if_sys_loaded(cash, exp);
+		}
+		else
+		{
+			g_mgr.sys = financial_system(cash, exp, ::cur_date);
+			g_mgr.system_loaded.store(true);
 
-                SET_SUCCESS_MESSAGE(Error_Message(), L"System Created!");
-            }
-        }
-        else
-        {
-            SET_ERROR_MESSAGE(Error_Message(), L"Must have Cash >= Exp >= 0!");
-        }
-    }
-    else
-    {
-        SET_ERROR_MESSAGE(Error_Message(), L"Invalid Input!");
-    }
+			SET_SUCCESS_MESSAGE(Error_Message(), L"System Created!");
+		}
+	}
+	else
+	{
+		SET_ERROR_MESSAGE(Error_Message(), L"Must have Cash >= Exp >= 0!");
+	}
 }
 
 winrt::fire_and_forget winrt::main_GUI::implementation::CreateSystemPage::approve_creation_if_sys_loaded(double cash, double exp)

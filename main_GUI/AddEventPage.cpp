@@ -10,7 +10,7 @@
 
 namespace winrt::main_GUI::implementation
 {
-    AddEventPage::AddEventPage()
+    AddEventPage::AddEventPage() : sim(g_mgr.sys, ::cur_date)
     {
         InitializeComponent();
     }
@@ -121,16 +121,7 @@ void winrt::main_GUI::implementation::AddEventPage::Button_Click(winrt::Windows:
         return;
     }
 
-    std::wstring input_amount(Amount_Input().Text());
-    if (std::regex_match(input_amount, ::double_wregex_obj))
-    {
-        amount = std::stof(input_amount);
-    }
-    else
-    {
-        SET_ERROR_MESSAGE(Error_Message(), L"Invalid amount input.");
-        return;
-    }
+    amount = Amount_Input().Value();
 
     if (Event_Type_Picker().SelectedIndex() == 0) // acc income
     {
@@ -164,7 +155,7 @@ void winrt::main_GUI::implementation::AddEventPage::Button_Click(winrt::Windows:
         else // proposals
         {
             sim_duration = Dur_Slider_Input().Value();
-            simulation sim(g_mgr.sys, cur_date + sim_duration);
+            sim = simulation(g_mgr.sys, cur_date + sim_duration);
 
             SET_SUCCESS_MESSAGE(Error_Message(), L"You are adding a proposal. Please switch to the simulation area for simulation result and to continue your operation.");
 
@@ -186,23 +177,7 @@ void winrt::main_GUI::implementation::AddEventPage::Button_Click(winrt::Windows:
             }
 
             // run the simulation
-            {
-                sim_results.clear();
-
-                while (sim.get_date() < sim.end_date)
-                {
-                    bool bSafeState = sim.in_safe_state();
-
-                    sim_results.push_back({ bSafeState, (int)sim.get_cash() });
-                    sim.advance_one_day();
-
-                    if (!bSafeState)
-                    {
-                        sim.aborted = true;
-                        break;
-                    }
-                }
-            }
+            sim.start_simulation();
 
             // update the calendar
             // we must first set the date to a far away day to let the calendar can update all days near
@@ -262,11 +237,11 @@ void winrt::main_GUI::implementation::AddEventPage::CalendarView_CalendarViewDay
     {
         auto diff = DateTime_to_date(args.Item().Date()) - cur_date;
         auto t = find_the_text_block(args);
-        if (diff >= 0 && diff < sim_results.size()) // the day is in the simulation
+        if (diff >= 0 && diff < sim.sim_results.size()) // the day is in the simulation
         {
             args.Item().IsBlackout(false);
-            t.Text(t.Text() + L"\nmoney\n" + std::to_wstring(sim_results[diff].second));
-            args.Item().SetDensityColors({ sim_results[diff].first ? wu::Colors::Green() : wu::Colors::Red() });
+            t.Text(t.Text() + L"\nmoney\n" + std::to_wstring(sim.sim_results[diff].second));
+            args.Item().SetDensityColors({ sim.sim_results[diff].first ? wu::Colors::Green() : wu::Colors::Red() });
         }
         else
         {
@@ -314,22 +289,13 @@ void winrt::main_GUI::implementation::AddEventPage::Page_Loaded(winrt::Windows::
     Dur_Slider_Input().Value(g_mgr.default_simulation_duration);
 }
 
-
-void winrt::main_GUI::implementation::AddEventPage::Dur_Txt_Input_KeyDown(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Input::KeyRoutedEventArgs const& e)
-{
-    if (e.Key() == Windows::System::VirtualKey::Enter) // only when enter is pressed do we try to sync the value
-    {
-        std::wstring val_str(Dur_Txt_Input().Text());
-        if (std::regex_match(val_str, integer_wregex_obj))
-        {
-            Dur_Slider_Input().Value(std::stoi(val_str));
-        }
-    }
-}
-
-
 void winrt::main_GUI::implementation::AddEventPage::Name_Input_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::TextChangedEventArgs const& e)
 {
     // clears message text
     if (Error_Message()) Error_Message().Text(L"");
+}
+
+void winrt::main_GUI::implementation::AddEventPage::Dur_Txt_Input_Value_Changed(winrt::Windows::Foundation::IInspectable const& sender, muxc::NumberBoxValueChangedEventArgs const& e)
+{
+    Dur_Slider_Input().Value(Dur_Txt_Input().Value());
 }

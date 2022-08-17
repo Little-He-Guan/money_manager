@@ -5,16 +5,17 @@
     xmlns:local="using:main_GUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
         <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="2,10,2,10">
-            <TextBox x:Name="Cash_Input" 
+            <muxc:NumberBox x:Name="Cash_Input" 
                      Width="200" Header="Enter your current cash:" PlaceholderText="0" 
                      HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,10,10"/>
         </Border>
         <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="2,10,2,10">
-            <TextBox x:Name="Expectation_Input" 
+            <muxc:NumberBox x:Name="Expectation_Input" 
                      Width="200" Header="Enter your expectation:" PlaceholderText="0" 
                      HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,10,10"/>
         </Border>

@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\title{User Manual}
+\date{\today}
+\author{Guanyuming He}
+
+\begin{document}
+
+\maketitle
+
+\section{Ideas}
+The piece of software \emph{money manager} is designed to help the user in managing his money (how it is spent).
+
+\subsection{Current cash and expectation}
+The program works ultimately around the user's \emph{current cash} and their expectation that the money should always be above. These two, and all the other things the program care about, forms a \emph{(financial) system}.
+
+If the current cash is above the expectation, the system is said to be in a \emph{safe state}.
+
+\subsection{Event}
+The user's money changes, and a thing that causes it to change is called an \emph{event}. An event that increases the money is an \emph{income}, while one that decreases the money is a \emph{proposal}
+
+\subsubsection{Proposals}
+The name is decided to be proposal because the program is designed to work as follows:
+
+When the user wants to spend a sum of money, they \emph{propose} to the program (at the adding event page), and the program will simulate the future that includes the proposal and see if the system would be in a safe state always during the days the simulation takes account of. If the program does not see any danger, it will allow the user to add the proposal (allow them to spend the sum of money that they want).
+
+\subsubsection{Incomes}
+Incomes, on the other hand, can never lead the system out of a safe state, so the program does not make decisions and pass them blindly. And most importantly, in reality one usually does not need to worry about the influence of an amount of incoming money on their financial state, because it would always make it better.
+
+\paragraph{Accidental incomes}
+It is the kind that the user gained by chance and which they are not sure of happening again in the future. The program immediately increases the current cash by the amount when instructed to add an accidental income.
+
+\subsubsection{Actual}
+The amount of any event is the user's anticipation when the event is created, and may not be exactly the same when it actually takes place. Therefore, the program allows the user to apply an \emph{actual} to an event when it is about to happen (when today is immediately before its end).
+
+\subsection{Time}
+In the program, the smallest time granularity used is \emph{day}. An event starts at some day and ends at another. An event takes place at its end (i.e. that program changes the amount of the money accordingly when it detects that today is the end of some events).
+
+\subsubsection{Effective duration}
+Except for accidental incomes, any event must be associated with an effective duration. The event will be kept during the duration and takes place at its end. The program supports five kind of duration types:
+\begin{itemize}
+	\item Daily events last exactly one day. 
+	\item Weekly events last exactly seven days.
+	\item Monthly events last until the next date in the next month (not including), or the remaining dates in the current month and the whole next month if the date is not present in the next month (The situation can only be found if the event starts at the 29\textsuperscript{th}, 30\textsuperscript{th}, or the 31\textsuperscript{st}, and if the next month is shorter than the current one. So it is a reasonable choice).
+	\item Seasonal events can start at any time, but always end immediately before the four points: 1\textsuperscript{st} Feb., 1\textsuperscript{st} May, 1\textsuperscript{st} Aug., and 1\textsuperscript{st} Nov.
+	\item Annual events can start at any time, and end immediately before the same date the next year, or 28\textsuperscript{th} Feb.~if it starts at 29\textsuperscript{th} Feb.
+\end{itemize}
+
+\subsubsection{Periods}
+The program supports periodic events (periodic proposals and fixed incomes) that happen periodically. Any of them will start immediately again at its end.
+
+\subsection{Log}
+Every event is recorded when it takes place. For accidental incomes, each is recorded immediately when it is added. For others, each is recorded when the program detects that it needs to happen now (when its end has been reached).
+
+The recordings can be viewed at the log page.
+
+\subsection{Simulation}
+The user can run a simulation to see how their money would change in the near future based on current events they have.
+
+If the system would always be in a safe state during the duration, the program will also give an amount of money that the user can spend everyday averagely.
+	
+\end{document}

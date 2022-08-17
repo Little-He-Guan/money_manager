@@ -2,6 +2,7 @@
 
 #include "AddEventPage.g.h"
 
+#include "../money_manager/simulation.h"
 #include "internal_sys.h"
 
 namespace winrt::main_GUI::implementation
@@ -27,19 +28,18 @@ namespace winrt::main_GUI::implementation
         void CalendarView_CalendarViewDayItemChanging(winrt::Windows::UI::Xaml::Controls::CalendarView const& sender, winrt::Windows::UI::Xaml::Controls::CalendarViewDayItemChangingEventArgs const& args);
         // continue button
         void Button_Click_1(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
+        void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
+        void Name_Input_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::TextChangedEventArgs const& e);
+        void Dur_Txt_Input_Value_Changed(winrt::Windows::Foundation::IInspectable const& sender, muxc::NumberBoxValueChangedEventArgs const& e);
 
     private:
-        std::vector<std::pair<bool, int>> sim_results;
+        ::simulation sim;
 
         std::string name;
         double amount;
         date start;
         financial_event::effective_duration type;
         int sim_duration;
-    public:
-        void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
-        void Dur_Txt_Input_KeyDown(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Input::KeyRoutedEventArgs const& e);
-        void Name_Input_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::TextChangedEventArgs const& e);
     };
 }
 

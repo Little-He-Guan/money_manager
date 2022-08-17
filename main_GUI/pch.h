@@ -25,6 +25,12 @@
 #include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.Security.Cryptography.h>
 
+#include "winrt/Microsoft.UI.Xaml.Automation.Peers.h"
+#include "winrt/Microsoft.UI.Xaml.Controls.h"
+#include "winrt/Microsoft.UI.Xaml.Controls.Primitives.h"
+#include "winrt/Microsoft.UI.Xaml.Media.h"
+#include "winrt/Microsoft.UI.Xaml.XamlTypeInfo.h"
+
 #include <functional>
 
 using namespace winrt;
@@ -38,7 +44,13 @@ namespace wux = Windows::UI::Xaml;
 namespace wuxc = Windows::UI::Xaml::Controls;
 namespace wuxm = Windows::UI::Xaml::Media;
 
+namespace mu = Microsoft::UI;
+namespace mux = Microsoft::UI::Xaml;
+namespace muxc = Microsoft::UI::Xaml::Controls;
+namespace muxm = Microsoft::UI::Xaml::Media;
+
 namespace ws = Windows::Storage;
+namespace wf = Windows::Foundation;
 namespace wfc = Windows::Foundation::Collections;
 namespace wsc = Windows::Security::Cryptography;
 

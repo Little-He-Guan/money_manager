@@ -19,11 +19,10 @@ namespace winrt::main_GUI::implementation
     private:
         simulation sim;
 
-        std::vector<std::pair<bool, int>> sim_results;
-
     public:
         void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e);
         void Dur_Txt_Input_KeyDown(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Input::KeyRoutedEventArgs const& e);
+        void Dur_Txt_Input_Value_Changed(winrt::Windows::Foundation::IInspectable const& sender, muxc::NumberBoxValueChangedEventArgs const& e);
     };
 }
 

@@ -5,6 +5,7 @@
     xmlns:local="using:main_GUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
@@ -17,14 +18,14 @@
         <StackPanel Orientation="Vertical"
                     Grid.Row="0"
                     Margin="0,0,0,20">
-            <TextBox x:Name="Dur_Txt_Input" 
+            <muxc:NumberBox x:Name="Dur_Txt_Input" 
                  Header="Simulation Duration (In days):" 
-                 Width="400" 
+                 MaxWidth="300" 
                  HorizontalAlignment="Center"
-                 KeyDown="Dur_Txt_Input_KeyDown" 
-                 Margin="0,20,0,5" Text="{Binding Value, ElementName=Dur_Slider_Input, Mode=OneWay}"/>
+                 ValueChanged="Dur_Txt_Input_Value_Changed"
+                 Margin="0,20,0,5" Text="{Binding Value, ElementName=Dur_Slider_Input, Mode=TwoWay}" />
             <Slider x:Name="Dur_Slider_Input" 
-                Width="400" 
+                MaxWidth="300"
                 Minimum="30" Maximum="1826" 
                 AutomationProperties.Name="Slider with ticks" 
                 TickFrequency="30" TickPlacement="Outside" />

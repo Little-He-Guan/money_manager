@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Custom="using:System.Numerics"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     x:Class="main_GUI.FindEventPage"
     mc:Ignorable="d">
 
@@ -91,16 +92,19 @@
 
             <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="0,10,10,10">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
-                    <TextBox x:Name="Amount_Input" Header="Current event amount" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,10,10"/>
+                    <muxc:NumberBox x:Name="Amount_Input" 
+                             Header="Current event amount" 
+                             HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,10,10"/>
                     <Button x:Name="Amount_Button" Content="Change Amount" Click="Amount_Button_Click"/>
                 </StackPanel>
             </Border>
 
             <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="0,10,10,10">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
-                    <TextBox x:Name="Actual_Input" 
+                    <muxc:NumberBox x:Name="Actual_Input" 
                              Header="Current event actual" 
-                             PlaceholderText="Can only be applied the day before the event's end" TextWrapping="Wrap"
+                             MaxWidth="200"
+                             PlaceholderText="Can only be applied the day before the event's end"
                              HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,10,10"/>
                     <Button x:Name="Actual_Button" Content="Apply Actual" Click="Actual_Button_Click"/>
                 </StackPanel>

@@ -32,6 +32,9 @@
     <Page Include="LoadingPage.xaml">
       <Filter>Pages</Filter>
     </Page>
+    <Page Include="HelpPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -238,11 +241,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
-    <None Include="packages.config" />
     <None Include="main_GUI_TemporaryKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\documentation\User Manual.pdf">
+      <Filter>Assets</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

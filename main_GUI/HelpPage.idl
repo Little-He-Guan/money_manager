@@ -1,0 +1,9 @@
+namespace main_GUI
+{
+    [default_interface]
+    runtimeclass HelpPage : Windows.UI.Xaml.Controls.Page
+    {
+        HelpPage();
+        Int32 MyProperty;
+    }
+}

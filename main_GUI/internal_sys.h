@@ -30,6 +30,7 @@ constexpr auto save_file_name_w = L"save.sav";
 constexpr auto log_file_name_w = L"log.log";
 
 constexpr auto theme_settings_entry = L"themeSettings";
+constexpr auto first_launch_entry = L"firstLaunch";
 
 // UWP sucks with std::fstream :(
 // We must instead use the system's APIs.

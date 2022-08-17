@@ -4,6 +4,7 @@
     xmlns:local="using:main_GUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:Custom="using:System"
     x:Class="main_GUI.AddEventPage"
     mc:Ignorable="d"
@@ -52,7 +53,7 @@
             </Border>
 
             <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="5,5,5,5">
-                <TextBox 
+                <muxc:NumberBox
                     x:Name="Amount_Input"
                     Header="Enter Event Amount"
                     PlaceholderText="An amount is required"
@@ -98,23 +99,23 @@
 
             <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAccentBrush}" Margin="5,5,5,5">
                 <StackPanel Orientation="Horizontal">
-                    <TextBox 
-                     x:Name="Dur_Txt_Input" 
-                     Header="Simulation Duration (In days):" 
-                     Width="400" 
-                     HorizontalAlignment="Center" 
-                     KeyDown="Dur_Txt_Input_KeyDown"
-                     Margin="20,5,0,5" Text="{Binding Value, ElementName=Dur_Slider_Input, Mode=OneWay}"
-                />
+                    <muxc:NumberBox 
+                         x:Name="Dur_Txt_Input" 
+                         Header="Simulation Duration (In days):" 
+                         Width="200"
+                         HorizontalAlignment="Center"
+                         ValueChanged="Dur_Txt_Input_Value_Changed"
+                         Margin="20,5,0,5" Value="{Binding Value, ElementName=Dur_Slider_Input, Mode=TwoWay}" 
+                    />
                     <Slider 
-                    x:Name="Dur_Slider_Input" 
-                    Width="400"
-                    Margin="5,5,0,5"
-                    VerticalAlignment="Bottom"
-                    Minimum="30" Maximum="1826" 
-                    AutomationProperties.Name="Slider with ticks" 
-                    TickFrequency="30" TickPlacement="Outside" 
-                />
+                        x:Name="Dur_Slider_Input" 
+                        Width="300"
+                        Margin="5,5,0,5"
+                        VerticalAlignment="Bottom"
+                        Minimum="30" Maximum="1826" 
+                        AutomationProperties.Name="Slider with ticks" 
+                        TickFrequency="30" TickPlacement="Outside" 
+                    />
                 </StackPanel>
             </Border>
 
